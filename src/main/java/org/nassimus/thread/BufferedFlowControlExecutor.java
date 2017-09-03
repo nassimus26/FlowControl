@@ -68,8 +68,6 @@ public abstract class BufferedFlowControlExecutor<V> extends FlowControlExecutor
     }
 
     private boolean shouldFlush(){
-        if (buffer==null)
-            return false;
         return isWorkDone() && (!buffer.isEmpty() || semaphore.availablePermits() != nbTotalTasks) && !working.get();
     }
 

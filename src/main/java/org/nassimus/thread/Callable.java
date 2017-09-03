@@ -1,5 +1,8 @@
 package org.nassimus.thread;
-
+/*
+* @author : Nassim MOUALEK
+* cd_boite@yahoo.fr
+* */
 public abstract class Callable<V> implements Runnable {
     private FlowControlExecutor<V> executorWithFlowControl = null;
 

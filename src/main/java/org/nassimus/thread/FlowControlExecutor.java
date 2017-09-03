@@ -9,7 +9,10 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
-
+/*
+* @author : Nassim MOUALEK
+* cd_boite@yahoo.fr
+* */
 public abstract class FlowControlExecutor<V> {
 
     private static Runtime runtime = Runtime.getRuntime();

@@ -7,7 +7,10 @@ import org.nassimus.thread.BuffredCallable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
+/*
+* @author : Nassim MOUALEK
+* cd_boite@yahoo.fr
+* */
 public class BufferedFlowControlExecutorTest {
 
     private String generateRow(int i){

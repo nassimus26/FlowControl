@@ -2,7 +2,10 @@ package org.nassimus.thread;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+/*
+* @author : Nassim MOUALEK
+* cd_boite@yahoo.fr
+* */
 public abstract class BufferedFlowControlExecutor<V> extends FlowControlExecutor<V> {
 
     private BuffredCallable<V> callable;
@@ -75,8 +78,9 @@ public abstract class BufferedFlowControlExecutor<V> extends FlowControlExecutor
             }finally {
                 if (shouldFlush()) {
                     process();
-                }else if (isWorkDone() && !working.get())
+                }else if (isWorkDone() && !working.get()) {
                     break;
+                }
             }
         }
         executor.shutdown();

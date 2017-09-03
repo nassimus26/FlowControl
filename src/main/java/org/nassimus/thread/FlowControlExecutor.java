@@ -95,7 +95,6 @@ public abstract class FlowControlExecutor<V> {
     }
 
 
-
     public void submit(Callable<V> callable) throws InterruptedException {
         semaphore.acquire();
         callable.setExecutorWithFlowControl(this);
@@ -185,7 +184,7 @@ public abstract class FlowControlExecutor<V> {
         // long nbTaskExecutedCurr = nbTotalTasks;
         int actives = executor.getActiveCount();
         int queue = nbTotalTasks - semaphore.availablePermits() - actives;
-        long nbTaskExecutedCurr = executor.getTaskCount() - queue - actives -1;
+        long nbTaskExecutedCurr = executor.getTaskCount() - queue - actives;
         nbTaskExecutedCurr = nbTaskExecutedCurr < 0 ? 0 : nbTaskExecutedCurr;
 
         long speedNbTaskBySec = (long) (((double) nbTaskExecutedCurr - nbTaskExecutedLast) / (((double) timeMilliCurr - timeMilliLast) / 1000));
@@ -202,10 +201,10 @@ public abstract class FlowControlExecutor<V> {
         sb.append((actives > 0 ? actives : 0) + space, 0, 2);
         sb.append(", Queue : ");
         sb.append((queue > 0 ? queue : 0) + space, 0, 4);
-        sb.append(", Speed (Current/Avg): ");
-        sb.append(decimalFormat.format(speedNbTaskBySec * chunkSize) + space, 0, 8);
-        sb.append(" / ");
-        sb.append(decimalFormat.format(speedAvgNbTaskBySec * chunkSize) + space, 0, 8);
+        sb.append(", Speed/Sec (Current-Avg): ");
+        sb.append(decimalFormat.format(speedNbTaskBySec * chunkSize) + space, 0, 10);
+        sb.append(" - ");
+        sb.append(decimalFormat.format(speedAvgNbTaskBySec * chunkSize) + space, 0, 10);
         sb.append(", Done : ");
         sb.append(decimalFormat.format(nbTaskExecutedCurr * chunkSize) + space, 0, 12);
         sb.append(", ");

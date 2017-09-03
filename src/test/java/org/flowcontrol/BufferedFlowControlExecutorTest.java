@@ -36,7 +36,7 @@ public class BufferedFlowControlExecutorTest {
                             return count.get()==size;
                         }
         };
-        System.out.println("Starting");
+        System.out.println("Starting Parallel processing");
         processRows.printLog(0, 100);
         long now = System.currentTimeMillis();
         while (count.get()<size){
@@ -48,9 +48,10 @@ public class BufferedFlowControlExecutorTest {
             }
         }
         processRows.waitAndFlushAndShutDown();
-        System.out.println("Done in "+((System.currentTimeMillis()-now)/1000.0)+" seconds");
+        System.out.println("Parallel processing done in "+((System.currentTimeMillis()-now)/1000.0)+" seconds");
         Collections.sort(values);
         Collections.sort(result);
+        processRows.toString(1);
         Assert.assertArrayEquals( values.toArray(), result.toArray());
     }
     private String generateRow(int i){

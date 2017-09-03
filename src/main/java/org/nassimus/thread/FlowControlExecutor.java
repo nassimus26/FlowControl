@@ -196,13 +196,13 @@ public abstract class FlowControlExecutor<V> {
 
         String space = "               ";
         StringBuffer sb = new StringBuffer();
-        sb.append("[Thread name=");
+        sb.append("Thread ");
         sb.append(name);
-        sb.append("] Threads : ");
+        sb.append(" : Actives : ");
         sb.append((actives > 0 ? actives : 0) + space, 0, 5);
         sb.append(", Queue : ");
         sb.append((queue > 0 ? queue : 0) + space, 0, 8);
-        sb.append(", Speed : ");
+        sb.append(", Speed (Current/Avg): ");
         sb.append(decimalFormat.format(speedNbTaskBySec * chunkSize) + space, 0, 10);
         sb.append(" / ");
         sb.append(decimalFormat.format(speedAvgNbTaskBySec * chunkSize) + space, 0, 10);
@@ -210,7 +210,7 @@ public abstract class FlowControlExecutor<V> {
         sb.append(decimalFormat.format(nbTaskExecutedCurr * chunkSize) + space, 0, 15);
         sb.append(", ");
         sb.append(((((double) timeMilliCurr) - timeMilliStart) / 1000) + space, 0, 10);
-        sb.append(" s | ");
+        sb.append(" Mem (Aval, Free, Total, Max) :");
         sb.append(((runtime.totalMemory() - runtime.freeMemory()) / mb));
         sb.append(", ");
         sb.append((runtime.freeMemory() / mb));
@@ -231,6 +231,7 @@ public abstract class FlowControlExecutor<V> {
     public void printLog(int delay, int millisec, final long nbLinesClunk) {
         timer = new Timer(true);
         final FlowControlExecutor<V> thisf = this;
+        System.out.println();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

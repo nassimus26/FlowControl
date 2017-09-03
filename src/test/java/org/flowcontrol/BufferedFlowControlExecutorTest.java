@@ -16,7 +16,7 @@ public class BufferedFlowControlExecutorTest {
     @Test
     public void testFlowControl() throws Throwable {
         AtomicInteger count = new AtomicInteger();
-        int size = 1_000_000;
+        int size = 2_000_000;
         final List<String> values = new ArrayList<>();
         for (int i=0;i<size;i++)
             values.add(transformRow(generateRow(i)));
@@ -36,6 +36,9 @@ public class BufferedFlowControlExecutorTest {
                             return count.get()==size;
                         }
         };
+        System.out.println("Starting");
+        processRows.printLog(0, 250);
+        long now = System.currentTimeMillis();
         while (count.get()<size){
             try {
                 processRows.submit("row_"+count.get());
@@ -44,8 +47,8 @@ public class BufferedFlowControlExecutorTest {
                 e.printStackTrace();
             }
         }
-        System.out.println("waiting");
         processRows.waitAndFlushAndShutDown();
+        System.out.println("Done in "+((System.currentTimeMillis()-now)/1000.0)+" seconds");
         Collections.sort(values);
         Collections.sort(result);
         Assert.assertArrayEquals( values.toArray(), result.toArray());

@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BufferedFlowControlExecutorTest {
 
     @Test
-    public void testFlowControl() throws InterruptedException {
+    public void testFlowControl() throws Throwable {
         AtomicInteger count = new AtomicInteger();
         int size = 1_000_000;
         final List<String> values = new ArrayList<>();
@@ -45,7 +45,7 @@ public class BufferedFlowControlExecutorTest {
             }
         }
         System.out.println("waiting");
-        processRows.waitAndFlushAndShutDown();
+        processRows.waitAndFlushAndShutDownWithException();
         Collections.sort(values);
         Collections.sort(result);
         Assert.assertArrayEquals( values.toArray(), result.toArray());

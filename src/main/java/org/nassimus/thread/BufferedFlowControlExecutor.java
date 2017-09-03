@@ -86,4 +86,25 @@ public abstract class BufferedFlowControlExecutor<V> extends FlowControlExecutor
         executor.shutdown();
         printLogStop();
     }
+    public void waitAndFlushAndShutDownWithException() throws Throwable {
+        while(true){
+            try {
+                if (shouldFlush())
+                    process();
+                if (executionExceptions.size() > 0) {
+                    throw executionExceptions.poll();
+                }
+                Thread.sleep(100);
+            }finally {
+                if (shouldFlush()) {
+                    process();
+                }else if (isWorkDone() && !working.get()) {
+                    break;
+                }
+            }
+        }
+        executor.shutdown();
+        printLogStop();
+    }
+
 }

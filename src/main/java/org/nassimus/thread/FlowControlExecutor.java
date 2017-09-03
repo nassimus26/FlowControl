@@ -20,7 +20,7 @@ public abstract class FlowControlExecutor<V> {
 
     private DecimalFormat decimalFormat = new DecimalFormat();
 
-    private Queue<Throwable> executionExceptions = new LinkedBlockingQueue<Throwable>();
+    protected Queue<Throwable> executionExceptions = new LinkedBlockingQueue<Throwable>();
 
     protected Semaphore semaphore = null;
     private String name = null;

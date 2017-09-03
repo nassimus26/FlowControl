@@ -45,7 +45,7 @@ public class BufferedFlowControlExecutorTest {
             }
         }
         System.out.println("waiting");
-        processRows.waitAndFlushAndShutDownWithException();
+        processRows.waitAndFlushAndShutDown();
         Collections.sort(values);
         Collections.sort(result);
         Assert.assertArrayEquals( values.toArray(), result.toArray());

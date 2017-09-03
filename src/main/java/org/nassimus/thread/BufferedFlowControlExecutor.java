@@ -36,6 +36,12 @@ public abstract class BufferedFlowControlExecutor<V> extends FlowControlExecutor
         this(null,0, nbThreads, maxQueueSize, name );
     }
 
+    public void submitWithException(V params) throws Throwable {
+        submit(params);
+        if (executionExceptions.size() > 0) {
+            throw executionExceptions.poll();
+        }
+    }
 
     public void submit(V params) throws InterruptedException {
         if (isWorkDone())

@@ -226,21 +226,26 @@ public abstract class FlowControlExecutor<V> {
     public void printLog(int delay, int millisec) {
         printLog(delay, millisec, 1);
     }
-
+    private long nbLinesClunk;
     public void printLog(int delay, int millisec, final long nbLinesClunk) {
         timer = new Timer(true);
-        final FlowControlExecutor<V> thisf = this;
+        this.nbLinesClunk = nbLinesClunk;
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println(thisf.toString(nbLinesClunk));
+                FlowControlExecutor.this.printLog(nbLinesClunk);
             }
         }, delay, millisec);
     }
 
     public void printLogStop() {
         if (timer != null) {
+            if (executor.getActiveCount()>0)
+                printLog(nbLinesClunk);
             timer.cancel();
         }
+    }
+    private void printLog(long nbLinesClunk){
+        System.out.println(toString(nbLinesClunk));
     }
 }

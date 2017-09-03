@@ -35,8 +35,6 @@ public abstract class FlowControlExecutor<V> {
 
     private Timer timer = null;
     private BuffredCallable<V> callable;
-    private List<V> buffer;
-    private int bufferSize;
     /**
      * Name examples :
      * </p>
@@ -46,16 +44,12 @@ public abstract class FlowControlExecutor<V> {
      * </p>
      * Executor __|__|__ WRITER
      *
-     * @param callable
      * @param nbThreads
      * @param maxQueueSize
      * @param name
      */
-    public FlowControlExecutor(BuffredCallable<V> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
+    public FlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this.timeMilliStart = System.currentTimeMillis();
-        this.bufferSize = bufferSize;
-        this.callable = callable;
-        this.buffer = new ArrayList<>();
         this.nbTotalTasks = nbThreads + maxQueueSize;
         this.semaphore = new Semaphore(nbTotalTasks);
         this.name = name;
@@ -66,10 +60,6 @@ public abstract class FlowControlExecutor<V> {
                 return new Thread(r, name + "_" + counterForName.incrementAndGet());
             }
         });
-    }
-
-    public FlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
-        this(null,0, nbThreads, maxQueueSize, name );
     }
 
     public void setThrowable(Throwable e) {
@@ -104,14 +94,7 @@ public abstract class FlowControlExecutor<V> {
         }
     }
 
-    public void submit(V params) throws InterruptedException {
-        synchronized (buffer){
-            buffer.add(params);
-            if (buffer.size()==bufferSize){
-                process();
-            }
-        }
-    }
+
 
     public void submit(Callable<V> callable) throws InterruptedException {
         semaphore.acquire();
@@ -119,16 +102,6 @@ public abstract class FlowControlExecutor<V> {
         executor.execute(callable);
     }
     public abstract boolean isWorkDone();
-    private void process() throws InterruptedException{
-        submit(new Callable<V>() {
-            @Override
-            public V call() throws Throwable {
-                callable.call((V[]) buffer.toArray());
-                return null;
-            }
-        });
-        buffer.clear();
-    }
 
     public void waitAndShutdownWithException() throws Throwable {
         synchronized (this) {

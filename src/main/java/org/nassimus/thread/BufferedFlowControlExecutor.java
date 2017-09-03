@@ -107,4 +107,8 @@ public abstract class BufferedFlowControlExecutor<V> extends FlowControlExecutor
         printLogStop();
     }
 
+    @Override
+    public String toString(long chunkSize) {
+        return super.toString(chunkSize*bufferSize);
+    }
 }

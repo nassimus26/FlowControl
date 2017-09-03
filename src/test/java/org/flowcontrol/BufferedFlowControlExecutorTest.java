@@ -37,7 +37,7 @@ public class BufferedFlowControlExecutorTest {
                         }
         };
         System.out.println("Starting");
-        processRows.printLog(0, 250);
+        processRows.printLog(0, 100);
         long now = System.currentTimeMillis();
         while (count.get()<size){
             try {

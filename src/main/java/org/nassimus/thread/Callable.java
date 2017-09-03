@@ -1,9 +1,9 @@
 package org.nassimus.thread;
 
 public abstract class Callable<V> implements Runnable {
-    private ExecutorWithFlowControl<V> executorWithFlowControl = null;
+    private FlowControlExecutor<V> executorWithFlowControl = null;
 
-    public void setExecutorWithFlowControl(ExecutorWithFlowControl<V> executorWithFlowControl) {
+    public void setExecutorWithFlowControl(FlowControlExecutor<V> executorWithFlowControl) {
         this.executorWithFlowControl = executorWithFlowControl;
     }
 

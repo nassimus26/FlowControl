@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class ExecutorWithFlowControl<V> {
+public abstract class FlowControlExecutor<V> {
 
     private static Runtime runtime = Runtime.getRuntime();
     private static int mb = 1024 * 1024;
@@ -48,7 +48,7 @@ public abstract class ExecutorWithFlowControl<V> {
      * @param maxQueueSize
      * @param name
      */
-    public ExecutorWithFlowControl(BuffredCallable<V> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
+    public FlowControlExecutor(BuffredCallable<V> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
         this.timeMilliStart = System.currentTimeMillis();
         this.bufferSize = bufferSize;
         this.callable = callable;
@@ -65,7 +65,7 @@ public abstract class ExecutorWithFlowControl<V> {
         });
     }
 
-    public ExecutorWithFlowControl(int nbThreads, int maxQueueSize, final String name) {
+    public FlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this(null,0, nbThreads, maxQueueSize, name );
     }
 
@@ -254,7 +254,7 @@ public abstract class ExecutorWithFlowControl<V> {
 
     public void printLog(int delay, int millisec, final long nbLinesClunk) {
         timer = new Timer(true);
-        final ExecutorWithFlowControl<V> thisf = this;
+        final FlowControlExecutor<V> thisf = this;
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

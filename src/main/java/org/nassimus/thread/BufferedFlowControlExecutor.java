@@ -1,12 +1,9 @@
 package org.nassimus.thread;
 
-import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class BufferedExecutorWithFlowControl<V> extends ExecutorWithFlowControl<V>{
+public abstract class BufferedFlowControlExecutor<V> extends FlowControlExecutor<V> {
 
     private BuffredCallable<V> callable;
     private List<V> buffer;
@@ -25,14 +22,14 @@ public abstract class BufferedExecutorWithFlowControl<V> extends ExecutorWithFlo
      * @param maxQueueSize
      * @param name
      */
-    public BufferedExecutorWithFlowControl(BuffredCallable<V> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
+    public BufferedFlowControlExecutor(BuffredCallable<V> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
         super(nbThreads, maxQueueSize, name);
         this.bufferSize = bufferSize;
         this.callable = callable;
         this.buffer = new ArrayList<>();
     }
 
-    public BufferedExecutorWithFlowControl(int nbThreads, int maxQueueSize, final String name) {
+    public BufferedFlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this(null,0, nbThreads, maxQueueSize, name );
     }
 

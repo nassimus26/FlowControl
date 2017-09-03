@@ -42,7 +42,6 @@ public class BufferedFlowControlExecutorTest {
                 return count.get()==size;
             }
         };
-
         while (count.get()<size){
             try {
                 processRows.submit("row_"+count.get());

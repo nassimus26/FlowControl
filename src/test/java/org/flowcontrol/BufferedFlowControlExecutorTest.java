@@ -30,7 +30,7 @@ public class BufferedFlowControlExecutorTest {
                             for (Object s: values)
                                 result.add( transformRow((String)s) );
                         }
-                    }, 100, BufferedFlowControlExecutor.getNbCores(), 20, "processRows") {
+                    }, 100, BufferedFlowControlExecutor.getNbCores(), 5000, "processRows") {
                         @Override
                         public boolean isWorkDone() {
                             return count.get()==size;

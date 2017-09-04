@@ -209,7 +209,7 @@ public abstract class FlowControlExecutor<V> {
         sb.append(decimalFormat.format(nbTaskExecutedCurr * chunkSize) + space, 0, 12);
         sb.append(", ");
         sb.append(((((double) timeMilliCurr) - timeMilliStart) / 1000) + space, 0, 8);
-        sb.append(" Mem (bytes):");
+        sb.append(" Mem (Mb):");
         sb.append(" Aval="+decimalFormat.format(((runtime.totalMemory() - runtime.freeMemory()) / mb))+ space,0, 14);
         sb.append(", ");
         sb.append(" Free="+(runtime.freeMemory() / mb)+ space,0, 14);

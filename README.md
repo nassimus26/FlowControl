@@ -64,7 +64,7 @@ public void testFlowControl() throws Throwable {
     System.out.println("Parallel processing done in "+((System.currentTimeMillis()-now)/1000.0)+" seconds");
     Collections.sort(expectedValues);
     Collections.sort(result);
-    Assert.assertArrayEquals( expectedValues.toArray(), result.toArray());
+    Assert.assertArrayEquals( expectedValues.toArray(), result.toArray() );
 }
 private String generateRow(int i){
     return "row_"+i;

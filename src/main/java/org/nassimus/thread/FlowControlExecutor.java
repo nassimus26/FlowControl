@@ -111,26 +111,28 @@ public abstract class FlowControlExecutor<V> {
         executor.execute(callable);
     }
     public abstract boolean isWorkDone();
-
-    public void waitAndShutdownWithException() throws Throwable {
+    private void waitAndShutdownWithException(boolean throwException) throws Throwable {
         synchronized (this) {
             if (semaphore.availablePermits() != nbTotalTasks) {
                 wait();
             }
         }
         executor.shutdown();
-        if (executionExceptions.size() > 0) {
+        if (throwException && executionExceptions.size() > 0) {
             throw executionExceptions.poll();
         }
     }
+    public void waitAndShutdownWithException() throws Throwable {
+        waitAndShutdownWithException(true);
+    }
 
     public void waitAndShutdown() throws InterruptedException {
-        synchronized (this) {
-            if (semaphore.availablePermits() != nbTotalTasks) {
-                wait();
-            }
+        try {
+            waitAndShutdownWithException(false);
+        } catch (Throwable e) {
+            if (e instanceof InterruptedException)
+                throw (InterruptedException)e;
         }
-        executor.shutdown();
     }
 
     public void shutdown() {

@@ -12,7 +12,7 @@ Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execu
 
 - Fixed BufferedBatch processing :
         
-     * Will run the callable with String[] call(String[] values) when the buffer is ready, extremely useful for small operations)
+     * Will submit the callable when the buffer is ready (full), extremely useful for small operations)
 
 Main classes :
 

@@ -6,7 +6,7 @@ Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execu
 
 - Exceptions handling
 
-- Aggregation (Map reduce)
+- Result Aggregation
 
 - Fixed Blocking Queue for BackPresure 
 

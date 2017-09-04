@@ -25,18 +25,26 @@ public void testFlowControl() throws Throwable {
     final List<String> result = new Vector<>();
     BufferedBatchFlowControlExecutor<String> processRows =
             new BufferedBatchFlowControlExecutor<String>(
+
                 new BufferedBatchCallable<String>() {
                     @Override
-                    public void call(Object[] values) throws Throwable {
+                    public void call(Object[] values) throws Exception {
                         for (Object s: values)
                             result.add( transformRow((String)s) );
                     }
                 }, 100, BufferedBatchFlowControlExecutor.getNbCores(), 5000, "processRows") {
-                    @Override
-                    public boolean isWorkDone() {
-                        return count.get()==nbrRows;
-                    }
+
+                @Override
+                public void handleException(Exception e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public boolean isSubmitsEnds() {
+                    return count.get()==nbrRows;
+                }
     };
+
     System.out.println("Starting Parallel processing...");
     processRows.printLog(0, 100);
     long now = System.currentTimeMillis();
@@ -62,6 +70,5 @@ private String transformRow(String row){// some CPU operations
     return row.replaceAll("row", "replaceMe").replaceAll("_", " ")
             .replaceAll("replaceMe", "ligne");
 }
-
 
 ```

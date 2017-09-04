@@ -54,27 +54,29 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
         }
     }
     public abstract boolean isWorkDone();
-    private AtomicBoolean working = new AtomicBoolean();
+    private AtomicBoolean processingBatch = new AtomicBoolean();
     private void process() throws InterruptedException{
         synchronized (buffer){
             if (buffer.isEmpty())
                 return;
             final V[] vals = (V[]) buffer.toArray();
             buffer.clear();
-            working.set(true);
+            processingBatch.set(true);
             submit(new Callable<V>() {
                 @Override
                 public V call() throws Throwable {
                     callable.call(vals);
-                    working.set(false);
+                    processingBatch.set(false);
                     return null;
                 }
             });
         }
     }
-
+    private boolean stillWorking(){
+        return semaphore.availablePermits() != nbTotalTasks;
+    }
     private boolean shouldFlush(){
-        return isWorkDone() && (!buffer.isEmpty() || semaphore.availablePermits() != nbTotalTasks) && !working.get();
+        return isWorkDone() && (!buffer.isEmpty() || stillWorking()) && !processingBatch.get();
     }
 
     public void waitAndFlushAndShutDown() throws InterruptedException {
@@ -92,7 +94,8 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
         while(true){
             synchronized (executor) {
                 try {
-                    executor.wait();
+                    if (stillWorking())
+                        executor.wait();
                     if (shouldFlush())
                         process();
                     if (throwException && executionExceptions.size() > 0) {
@@ -101,7 +104,7 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
                 } finally {
                     if (shouldFlush()) {
                         process();
-                    } else if (isWorkDone() && !working.get()) {
+                    } else if (isWorkDone() && !processingBatch.get()) {
                         break;
                     }
                 }

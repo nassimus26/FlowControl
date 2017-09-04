@@ -28,15 +28,12 @@ public class BufferedBatchFlowControlExecutorTest {
         final List<String> result = new Vector<>();
         BufferedBatchFlowControlExecutor<String, String[]> processRows =
                 new BufferedBatchFlowControlExecutor<>(
-                    new BufferedBatchCallable<String>() {
-                        @Override
-                        public String[] call(String[] values) throws Exception {
+                        values -> {
                             for ( int i=0; i<values.length; i++ ) {
                                 result.add(transformRow(values[i]));
                             }
                             return values;
-                        }
-                    }, 100, BufferedBatchFlowControlExecutor.getNbCores(), 5000, "processRows") {
+                        }, 100, BufferedBatchFlowControlExecutor.getNbCores(), 5000, "processRows") {
 
                     @Override
                     public void handleException(Exception e) {

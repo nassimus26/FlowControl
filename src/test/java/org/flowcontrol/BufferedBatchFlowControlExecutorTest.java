@@ -17,9 +17,9 @@ public class BufferedBatchFlowControlExecutorTest {
     public void testFlowControl() throws Throwable {
         AtomicInteger count = new AtomicInteger();
         int nbrRows = 2_000_000;
-        final List<String> values = new ArrayList<>();
+        final List<String> expectedValues = new ArrayList<>();
         for (int i=0;i<nbrRows;i++)
-            values.add(transformRow(generateRow(i)));
+            expectedValues.add(transformRow(generateRow(i)));
 
         final List<String> result = new Vector<>();
         BufferedBatchFlowControlExecutor<String> processRows =
@@ -49,9 +49,9 @@ public class BufferedBatchFlowControlExecutorTest {
         }
         processRows.waitAndFlushAndShutDown();
         System.out.println("Parallel processing done in "+((System.currentTimeMillis()-now)/1000.0)+" seconds");
-        Collections.sort(values);
+        Collections.sort(expectedValues);
         Collections.sort(result);
-        Assert.assertArrayEquals( values.toArray(), result.toArray());
+        Assert.assertArrayEquals( expectedValues.toArray(), result.toArray());
     }
     private String generateRow(int i){
         return "row_"+i;

@@ -4,11 +4,11 @@ Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execu
 
 **Features :** 
 
-1_ Exceptions handling
+- Exceptions handling
 
-2_ Fixed BackPresure Queue
+- Fixed BackPresure Queue
 
-3_ Fixed BufferedBatch processing 
+ - Fixed BufferedBatch processing 
 
 Main classes :
 

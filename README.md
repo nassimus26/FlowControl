@@ -23,7 +23,7 @@ Main classes :
 Example :
 ```java
 @Test
-public void testFlowControl() throws Throwable {
+public void testFlowControl() throws Exception {
     AtomicInteger count = new AtomicInteger();
     int nbrRows = 2_000_000;
     final List<String> expectedValues = new ArrayList<>();

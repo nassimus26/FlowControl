@@ -14,11 +14,11 @@ public abstract class Callable<V> implements Runnable {
     public void run() {
         try {
             executorWithFlowControl.aggregate(call());
-        } catch (Throwable e) {
-            executorWithFlowControl.setThrowable(e);
+        } catch (Exception e) {
+            executorWithFlowControl.pushException(e);
         }
     }
 
-    public abstract V call() throws Throwable;
+    public abstract V call() throws Exception;
 
 }

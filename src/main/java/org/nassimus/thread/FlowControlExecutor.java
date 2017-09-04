@@ -64,10 +64,12 @@ public abstract class FlowControlExecutor<V> {
             }
         });
     }
+    public abstract void handleException(Exception e);
 
-    public void setThrowable(Throwable e) {
+    void pushException(Exception e) {
         executionExceptions.add(e);
         semaphore.release();
+        handleException(e);
         synchronized (this) {
             if (semaphore.availablePermits() != nbTotalTasks) {
                 return;

@@ -5,6 +5,6 @@ package org.nassimus.thread;
 * */
 public abstract class BufferedBatchCallable<V> {
 
-    public abstract void call(Object[] values) throws Throwable;
+    public abstract void call(Object[] values) throws Exception;
 
 }

@@ -64,7 +64,7 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
 
             submit(new Callable<V>() {
                 @Override
-                public V call() throws Throwable {
+                public V call() throws Exception {
                     callable.call(vals);
                     return null;
                 }

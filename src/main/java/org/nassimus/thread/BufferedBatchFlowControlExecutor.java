@@ -54,19 +54,18 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
         }
     }
     public abstract boolean isWorkDone();
-    private AtomicBoolean processingBatch = new AtomicBoolean();
+
     private void process() throws InterruptedException{
         synchronized (buffer){
             if (buffer.isEmpty())
                 return;
             final V[] vals = (V[]) buffer.toArray();
             buffer.clear();
-            processingBatch.set(true);
+
             submit(new Callable<V>() {
                 @Override
                 public V call() throws Throwable {
                     callable.call(vals);
-                    processingBatch.set(false);
                     return null;
                 }
             });
@@ -74,7 +73,7 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
     }
 
     private boolean shouldFlush(){
-        return isWorkDone() && (!buffer.isEmpty() || !isQueueEmpty()) && !processingBatch.get();
+        return isWorkDone() && !buffer.isEmpty();
     }
 
     public void waitAndFlushAndShutDown() throws InterruptedException {
@@ -102,7 +101,7 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
                 } finally {
                     if (shouldFlush()) {
                         process();
-                    } else if (isWorkDone() && !processingBatch.get()) {
+                    } else if (isWorkDone()) {
                         break;
                     }
                 }

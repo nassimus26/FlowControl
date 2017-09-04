@@ -16,9 +16,9 @@ public class BufferedFlowControlExecutorTest {
     @Test
     public void testFlowControl() throws Throwable {
         AtomicInteger count = new AtomicInteger();
-        int size = 2_000_000;
+        int nbrRows = 2_000_000;
         final List<String> values = new ArrayList<>();
-        for (int i=0;i<size;i++)
+        for (int i=0;i<nbrRows;i++)
             values.add(transformRow(generateRow(i)));
 
         final List<String> result = new Vector<>();
@@ -33,13 +33,13 @@ public class BufferedFlowControlExecutorTest {
                     }, 100, BufferedFlowControlExecutor.getNbCores(), 5000, "processRows") {
                         @Override
                         public boolean isWorkDone() {
-                            return count.get()==size;
+                            return count.get()==nbrRows;
                         }
         };
         System.out.println("Starting Parallel processing...");
         processRows.printLog(0, 100);
         long now = System.currentTimeMillis();
-        while (count.get()<size){
+        while (count.get()<nbrRows){
             try {
                 processRows.submit("row_"+count.get());
                 count.incrementAndGet();

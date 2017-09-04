@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.nassimus.thread.BufferedBatchCallable;
 import org.nassimus.thread.BufferedBatchFlowControlExecutor;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,8 +66,10 @@ public class BufferedBatchFlowControlExecutorTest {
             }
         }
         processRows.waitAndFlushAndShutDown();
-        System.out.println("Parallel processing done in "+((System.currentTimeMillis()-now)/1000.0)+
-                " seconds, instead of "+processDurationWithOneThread+" seconds on 1 Thread ");
+        double parallelDuration = ((System.currentTimeMillis()-now)/1000.0);
+        System.out.println("Parallel processing done in "+ parallelDuration +
+                " seconds, instead of "+processDurationWithOneThread+" seconds on 1 Thread ("+
+                (int)(processDurationWithOneThread*100/parallelDuration)+"% faster)");
         Collections.sort(expectedValues);
         Collections.sort(result);
         Assert.assertEquals( nbrRows, expectedCount.get() );

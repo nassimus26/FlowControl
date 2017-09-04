@@ -28,7 +28,6 @@ public class BufferedBatchFlowControlExecutorTest {
         final List<String> result = new Vector<>();
         BufferedBatchFlowControlExecutor<String, String[]> processRows =
                 new BufferedBatchFlowControlExecutor<>(
-
                     new BufferedBatchCallable<String>() {
                         @Override
                         public String[] call(String[] values) throws Exception {
@@ -41,7 +40,8 @@ public class BufferedBatchFlowControlExecutorTest {
 
                     @Override
                     public void handleException(Exception e) {
-                        /* The executor will throw the exception at the end */ }
+                        /* The executor will throw the exception at the end if any exception */
+                    }
 
                     @Override
                     public boolean isSubmitsEnds() {

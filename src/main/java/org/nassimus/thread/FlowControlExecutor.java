@@ -34,7 +34,7 @@ public abstract class FlowControlExecutor<V> {
     private final AtomicInteger counterForName = new AtomicInteger();
 
     private Timer timer = null;
-    private BuffredCallable<V> callable;
+    private BufferedBatchCallable<V> callable;
     /**
      * Name examples :
      * </p>

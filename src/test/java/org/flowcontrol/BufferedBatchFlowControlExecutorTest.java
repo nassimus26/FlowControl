@@ -2,8 +2,8 @@ package org.flowcontrol;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nassimus.thread.BufferedFlowControlExecutor;
-import org.nassimus.thread.BuffredCallable;
+import org.nassimus.thread.BufferedBatchFlowControlExecutor;
+import org.nassimus.thread.BufferedBatchCallable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
 * */
-public class BufferedFlowControlExecutorTest {
+public class BufferedBatchFlowControlExecutorTest {
 
     @Test
     public void testFlowControl() throws Throwable {
@@ -22,15 +22,15 @@ public class BufferedFlowControlExecutorTest {
             values.add(transformRow(generateRow(i)));
 
         final List<String> result = new Vector<>();
-        BufferedFlowControlExecutor<String> processRows =
-                new BufferedFlowControlExecutor<String>(
-                    new BuffredCallable<String>() {
+        BufferedBatchFlowControlExecutor<String> processRows =
+                new BufferedBatchFlowControlExecutor<String>(
+                    new BufferedBatchCallable<String>() {
                         @Override
                         public void call(Object[] values) throws Throwable {
                             for (Object s: values)
                                 result.add( transformRow((String)s) );
                         }
-                    }, 100, BufferedFlowControlExecutor.getNbCores(), 5000, "processRows") {
+                    }, 100, BufferedBatchFlowControlExecutor.getNbCores(), 5000, "processRows") {
                         @Override
                         public boolean isWorkDone() {
                             return count.get()==nbrRows;

@@ -6,9 +6,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
 * */
-public abstract class BufferedFlowControlExecutor<V> extends FlowControlExecutor<V> {
+public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExecutor<V> {
 
-    private BuffredCallable<V> callable;
+    private BufferedBatchCallable<V> callable;
     private List<V> buffer;
     private int bufferSize;
     /**
@@ -25,14 +25,14 @@ public abstract class BufferedFlowControlExecutor<V> extends FlowControlExecutor
      * @param maxQueueSize
      * @param name
      */
-    public BufferedFlowControlExecutor(BuffredCallable<V> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
+    public BufferedBatchFlowControlExecutor(BufferedBatchCallable<V> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
         super(nbThreads, maxQueueSize, name);
         this.bufferSize = bufferSize;
         this.callable = callable;
         this.buffer = new ArrayList<>();
     }
 
-    public BufferedFlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
+    public BufferedBatchFlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this(null,0, nbThreads, maxQueueSize, name );
     }
 

@@ -34,9 +34,7 @@ public class BufferedBatchFlowControlExecutorTest {
                     }, 100, BufferedBatchFlowControlExecutor.getNbCores(), 5000, "processRows") {
 
                     @Override
-                    public void handleException(Exception e) {
-                        e.printStackTrace();
-                    }
+                    public void handleException(Exception e) { /* The executor will throw the exception at the end */ }
 
                     @Override
                     public boolean isSubmitsEnds() {

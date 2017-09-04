@@ -22,8 +22,10 @@ public class BufferedBatchFlowControlExecutorTest {
         AtomicInteger count = new AtomicInteger();
         int nbrRows = 2_000_000;
         final List<String> expectedValues = new ArrayList<>();
+        long now = System.currentTimeMillis();
         for (int i=0;i<nbrRows;i++)
             expectedValues.add(transformRow(generateRow(i)));
+        double processDurationWithOneThread = ((System.currentTimeMillis()-now)/1000.0);
         final AtomicInteger expectedCount = new AtomicInteger();
         final List<String> result = new Vector<>();
         BufferedBatchFlowControlExecutor<String, String[]> processRows =
@@ -53,7 +55,7 @@ public class BufferedBatchFlowControlExecutorTest {
 
         System.out.println("Starting Parallel processing...");
         processRows.printLog(0, 100);
-        long now = System.currentTimeMillis();
+        now = System.currentTimeMillis();
         while (count.get()<nbrRows){
             try {
                 processRows.submit("row_"+count.get());
@@ -63,7 +65,8 @@ public class BufferedBatchFlowControlExecutorTest {
             }
         }
         processRows.waitAndFlushAndShutDown();
-        System.out.println("Parallel processing done in "+((System.currentTimeMillis()-now)/1000.0)+" seconds");
+        System.out.println("Parallel processing done in "+((System.currentTimeMillis()-now)/1000.0)+
+                " seconds, instead of "+processDurationWithOneThread+" seconds on 1 Thread ");
         Collections.sort(expectedValues);
         Collections.sort(result);
         Assert.assertEquals( nbrRows, expectedCount.get() );

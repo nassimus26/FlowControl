@@ -14,9 +14,11 @@ Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execu
 
 Main classes :
 
-**FlowContorlExecutor** 
+- **FlowContorlExecutor** 
 
-**BufferedBatchFlowControlExecutor** exemple :
+- **BufferedBatchFlowControlExecutor** 
+
+Example :
 ```java
 @Test
 public void testFlowControl() throws Throwable {

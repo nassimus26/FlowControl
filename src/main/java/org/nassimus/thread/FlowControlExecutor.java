@@ -53,7 +53,7 @@ public abstract class FlowControlExecutor<V> {
         this.nbTotalTasks = nbThreads + maxQueueSize;
         this.semaphore = new Semaphore(nbTotalTasks);
         this.name = name;
-        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nbThreads);
+        this.executor = new FixedThreadPoolExecutor(nbThreads);
         executor.setThreadFactory(new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {

@@ -78,36 +78,32 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
     }
 
     public void waitAndFlushAndShutDown() throws InterruptedException {
-        while(true){
-            try {
-                if (shouldFlush())
-                    process();
-                Thread.sleep(100);
-            }finally {
-                if (shouldFlush()) {
-                    process();
-                }else if (isWorkDone() && !working.get()) {
-                    break;
-                }
-            }
+        try {
+            waitAndFlushAndShutDownWithException(false);
+        } catch (Throwable e) {
+            if (e instanceof InterruptedException)
+                throw (InterruptedException)e;
         }
-        executor.shutdown();
-        printLogStop();
     }
     public void waitAndFlushAndShutDownWithException() throws Throwable {
+        waitAndFlushAndShutDownWithException(true);
+    }
+    private void waitAndFlushAndShutDownWithException(boolean throwException) throws Throwable {
         while(true){
-            try {
-                if (shouldFlush())
-                    process();
-                if (executionExceptions.size() > 0) {
-                    throw executionExceptions.poll();
-                }
-                Thread.sleep(100);
-            }finally {
-                if (shouldFlush()) {
-                    process();
-                }else if (isWorkDone() && !working.get()) {
-                    break;
+            synchronized (executor) {
+                try {
+                    executor.wait();
+                    if (shouldFlush())
+                        process();
+                    if (throwException && executionExceptions.size() > 0) {
+                        throw executionExceptions.poll();
+                    }
+                } finally {
+                    if (shouldFlush()) {
+                        process();
+                    } else if (isWorkDone() && !working.get()) {
+                        break;
+                    }
                 }
             }
         }

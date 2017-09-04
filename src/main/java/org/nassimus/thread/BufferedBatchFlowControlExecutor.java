@@ -101,7 +101,7 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
                 } finally {
                     if (shouldFlush()) {
                         process();
-                    } else if (isWorkDone()) {
+                    } else if ( isWorkDone() && isQueueEmpty() ) {
                         break;
                     }
                 }

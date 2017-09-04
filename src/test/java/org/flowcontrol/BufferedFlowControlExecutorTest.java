@@ -51,7 +51,6 @@ public class BufferedFlowControlExecutorTest {
         System.out.println("Parallel processing done in "+((System.currentTimeMillis()-now)/1000.0)+" seconds");
         Collections.sort(values);
         Collections.sort(result);
-        processRows.toString(1);
         Assert.assertArrayEquals( values.toArray(), result.toArray());
     }
     private String generateRow(int i){

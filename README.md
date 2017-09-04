@@ -10,7 +10,9 @@ Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execu
 
 - Fixed Blocking Queue for BackPresure 
 
-- Fixed BufferedBatch processing 
+- Fixed BufferedBatch processing :
+        
+     * Will run the callable with String[] call(String[] values) when the buffer is ready)
 
 Main classes :
 

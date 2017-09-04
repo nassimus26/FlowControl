@@ -36,7 +36,7 @@ public class BufferedFlowControlExecutorTest {
                             return count.get()==size;
                         }
         };
-        System.out.println("Starting Parallel processing");
+        System.out.println("Starting Parallel processing...");
         processRows.printLog(0, 100);
         long now = System.currentTimeMillis();
         while (count.get()<size){

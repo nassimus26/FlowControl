@@ -201,22 +201,22 @@ public abstract class FlowControlExecutor<V> {
         sb.append((actives > 0 ? actives : 0) + space, 0, 2);
         sb.append(", Queue : ");
         sb.append((queue > 0 ? queue : 0) + space, 0, 4);
-        sb.append(", Speed/Sec (Current-Avg): ");
-        sb.append(decimalFormat.format(speedNbTaskBySec * chunkSize) + space, 0, 10);
+        sb.append(", Speed/Sec :");
+        sb.append(" Current="+decimalFormat.format(speedNbTaskBySec * chunkSize) + space, 0, 10);
         sb.append(" - ");
-        sb.append(decimalFormat.format(speedAvgNbTaskBySec * chunkSize) + space, 0, 10);
+        sb.append(" Avg="+decimalFormat.format(speedAvgNbTaskBySec * chunkSize) + space, 0, 10);
         sb.append(", Done : ");
         sb.append(decimalFormat.format(nbTaskExecutedCurr * chunkSize) + space, 0, 12);
         sb.append(", ");
         sb.append(((((double) timeMilliCurr) - timeMilliStart) / 1000) + space, 0, 8);
-        sb.append(" Mem (Aval, Free, Total, Max) :");
-        sb.append(((runtime.totalMemory() - runtime.freeMemory()) / mb));
+        sb.append(" Mem (bytes):");
+        sb.append(" Aval="+decimalFormat.format(((runtime.totalMemory() - runtime.freeMemory()) / mb))+ space,0, 14);
         sb.append(", ");
-        sb.append((runtime.freeMemory() / mb));
+        sb.append(" Free="+(runtime.freeMemory() / mb)+ space,0, 14);
         sb.append(", ");
-        sb.append((runtime.totalMemory() / mb));
+        sb.append(" Total="+(runtime.totalMemory() / mb)+ space,0, 15);
         sb.append(", ");
-        sb.append((runtime.maxMemory() / mb));
+        sb.append(" Max="+(runtime.maxMemory() / mb)+ space,0, 14);
         return sb.toString();
     }
     public void printLog(int period) {

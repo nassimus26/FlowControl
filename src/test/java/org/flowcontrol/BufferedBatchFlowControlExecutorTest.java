@@ -22,10 +22,13 @@ public class BufferedBatchFlowControlExecutorTest {
     public void testFlowControl() throws Exception {
         AtomicInteger count = new AtomicInteger();
         int nbrRows = 2_000_000;
+        final List<String> rows = new ArrayList<>();
+        for (int i=0;i<nbrRows;i++)
+            rows.add(generateRow(i));
         final List<String> expectedValues = new ArrayList<>();
         long now = System.currentTimeMillis();
-        for (int i=0;i<nbrRows;i++)
-            expectedValues.add(transformRow(generateRow(i)));
+        for (String row : rows)
+            expectedValues.add(transformRow(row));
         double processDurationWithOneThread = ((System.currentTimeMillis()-now)/1000.0);
         final AtomicInteger expectedCount = new AtomicInteger();
         final List<String> result = new Vector<>();
@@ -59,14 +62,14 @@ public class BufferedBatchFlowControlExecutorTest {
         System.out.println("Starting Parallel processing...");
         processRows.printLog(0, 100);
         now = System.currentTimeMillis();
-        while (count.get()<nbrRows){
+        for (String row:rows){
             try {
-                processRows.submit("row_"+count.get());
-                count.incrementAndGet();
+                processRows.submit(row);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+        count.set(rows.size());
         processRows.waitAndFlushAndShutDown();
         double parallelDuration = ((System.currentTimeMillis()-now)/1000.0);
         System.out.println("Parallel processing done in "+ parallelDuration +
@@ -85,5 +88,4 @@ public class BufferedBatchFlowControlExecutorTest {
         return row.replaceAll("row", "replaceMe").replaceAll("_", "!")
                 .replaceAll("replaceMe", "ligne").replaceAll("!", "_");
     }
-
 }

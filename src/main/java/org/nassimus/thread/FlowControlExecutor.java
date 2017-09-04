@@ -9,6 +9,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+
 /*
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
@@ -35,6 +37,7 @@ public abstract class FlowControlExecutor<V> {
 
     private Timer timer = null;
     private BufferedBatchCallable<V> callable;
+    protected Object emptyQueueLock = new Object();
     /**
      * Name examples :
      * </p>
@@ -53,7 +56,7 @@ public abstract class FlowControlExecutor<V> {
         this.nbTotalTasks = nbThreads + maxQueueSize;
         this.semaphore = new Semaphore(nbTotalTasks);
         this.name = name;
-        this.executor = new FixedThreadPoolExecutor(nbThreads);
+        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nbThreads);
         executor.setThreadFactory(new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -77,11 +80,18 @@ public abstract class FlowControlExecutor<V> {
         processAggregation(elementToAggregate);
         semaphore.release();
         synchronized (this) {
-            if (semaphore.availablePermits() != nbTotalTasks) {
+            if (!isQueueEmpty()) {
                 return;
             }
             notify();
         }
+        if (isQueueEmpty())
+            synchronized (emptyQueueLock){
+                emptyQueueLock.notifyAll();
+            }
+    }
+    public boolean isQueueEmpty(){
+        return semaphore.availablePermits() == nbTotalTasks;
     }
 
     protected void processAggregation(V elementToAggregate) {

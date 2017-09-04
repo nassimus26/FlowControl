@@ -36,6 +36,7 @@ public class BufferedBatchFlowControlExecutorTest {
                             return count.get()==nbrRows;
                         }
         };
+
         System.out.println("Starting Parallel processing...");
         processRows.printLog(0, 100);
         long now = System.currentTimeMillis();

@@ -72,11 +72,9 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
             });
         }
     }
-    private boolean stillWorking(){
-        return semaphore.availablePermits() != nbTotalTasks;
-    }
+
     private boolean shouldFlush(){
-        return isWorkDone() && (!buffer.isEmpty() || stillWorking()) && !processingBatch.get();
+        return isWorkDone() && (!buffer.isEmpty() || !isQueueEmpty()) && !processingBatch.get();
     }
 
     public void waitAndFlushAndShutDown() throws InterruptedException {
@@ -92,10 +90,10 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
     }
     private void waitAndFlushAndShutDownWithException(boolean throwException) throws Throwable {
         while(true){
-            synchronized (executor) {
+            synchronized (emptyQueueLock) {
                 try {
-                    if (stillWorking())
-                        executor.wait();
+                    if (!isQueueEmpty())
+                        emptyQueueLock.wait();
                     if (shouldFlush())
                         process();
                     if (throwException && executionExceptions.size() > 0) {

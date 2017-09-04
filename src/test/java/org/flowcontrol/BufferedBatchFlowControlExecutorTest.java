@@ -36,7 +36,7 @@ public class BufferedBatchFlowControlExecutorTest {
                                 result.add(transformRow(values[i]));
                             }
                             return values;
-                        }, 100, BufferedBatchFlowControlExecutor.getNbCores(), 5000, "processRows") {
+                        }, 2000, BufferedBatchFlowControlExecutor.getNbCores(), 1000, "processRows") {
 
                     @Override
                     public void handleException(Exception e) {
@@ -80,8 +80,8 @@ public class BufferedBatchFlowControlExecutorTest {
     }
 
     private String transformRow(String row){// some CPU operations
-        return row.replaceAll("row", "replaceMe").replaceAll("_", " ")
-                .replaceAll("replaceMe", "ligne");
+        return row.replaceAll("row", "replaceMe").replaceAll("_", "!")
+                .replaceAll("replaceMe", "ligne").replaceAll("!", "_");
     }
 
 }

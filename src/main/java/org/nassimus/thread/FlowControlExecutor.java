@@ -253,8 +253,7 @@ public abstract class FlowControlExecutor<V> {
 
     public void printLogStop() {
         if (timer != null) {
-            if (executor.getActiveCount()>0)
-                printLog(nbLinesClunk);
+            printLog(nbLinesClunk);
             timer.cancel();
         }
     }

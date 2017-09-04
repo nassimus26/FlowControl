@@ -110,7 +110,7 @@ public abstract class FlowControlExecutor<V> {
         callable.setExecutorWithFlowControl(this);
         executor.execute(callable);
     }
-    public abstract boolean isWorkDone();
+    public abstract boolean isSubmitsEnds();
     private void waitAndShutdownWithException(boolean throwException) throws Throwable {
         synchronized (this) {
             if (semaphore.availablePermits() != nbTotalTasks) {

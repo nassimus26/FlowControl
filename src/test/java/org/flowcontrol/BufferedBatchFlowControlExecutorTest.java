@@ -32,7 +32,7 @@ public class BufferedBatchFlowControlExecutorTest {
                         }
                     }, 100, BufferedBatchFlowControlExecutor.getNbCores(), 5000, "processRows") {
                         @Override
-                        public boolean isWorkDone() {
+                        public boolean isSubmitsEnds() {
                             return count.get()==nbrRows;
                         }
         };

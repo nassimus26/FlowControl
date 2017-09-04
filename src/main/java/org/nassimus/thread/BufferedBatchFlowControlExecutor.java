@@ -1,7 +1,7 @@
 package org.nassimus.thread;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+
 /*
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
@@ -44,7 +44,7 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
     }
 
     public void submit(V params) throws InterruptedException {
-        if (isWorkDone())
+        if (isSubmitsEnds())
             throw new RuntimeException("No more task accepted");
         synchronized (buffer){
             buffer.add(params);
@@ -53,7 +53,7 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
             }
         }
     }
-    public abstract boolean isWorkDone();
+    public abstract boolean isSubmitsEnds();
 
     private void process() throws InterruptedException{
         synchronized (buffer){
@@ -73,7 +73,7 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
     }
 
     private boolean shouldFlush(){
-        return isWorkDone() && !buffer.isEmpty();
+        return isSubmitsEnds() && !buffer.isEmpty();
     }
 
     public void waitAndFlushAndShutDown() throws InterruptedException {
@@ -101,7 +101,7 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
                 } finally {
                     if (shouldFlush()) {
                         process();
-                    } else if ( isWorkDone() && isQueueEmpty() ) {
+                    } else if ( isSubmitsEnds() && isQueueEmpty() ) {
                         break;
                     }
                 }

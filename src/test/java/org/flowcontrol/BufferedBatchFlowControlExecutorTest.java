@@ -2,11 +2,15 @@ package org.flowcontrol;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nassimus.thread.BufferedBatchFlowControlExecutor;
 import org.nassimus.thread.BufferedBatchCallable;
+import org.nassimus.thread.BufferedBatchFlowControlExecutor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
+
 /*
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
@@ -20,27 +24,35 @@ public class BufferedBatchFlowControlExecutorTest {
         final List<String> expectedValues = new ArrayList<>();
         for (int i=0;i<nbrRows;i++)
             expectedValues.add(transformRow(generateRow(i)));
-
+        final AtomicInteger expectedCount = new AtomicInteger();
         final List<String> result = new Vector<>();
-        BufferedBatchFlowControlExecutor<String> processRows =
-                new BufferedBatchFlowControlExecutor<String>(
+        BufferedBatchFlowControlExecutor<String, String[]> processRows =
+                new BufferedBatchFlowControlExecutor<>(
 
                     new BufferedBatchCallable<String>() {
                         @Override
-                        public void call(Object[] values) throws Exception {
-                            for (Object s: values)
-                                result.add( transformRow((String)s) );
+                        public String[] call(String[] values) throws Exception {
+                            for ( int i=0; i<values.length; i++ ) {
+                                result.add(transformRow(values[i]));
+                            }
+                            return values;
                         }
                     }, 100, BufferedBatchFlowControlExecutor.getNbCores(), 5000, "processRows") {
 
                     @Override
-                    public void handleException(Exception e) { /* The executor will throw the exception at the end */ }
+                    public void handleException(Exception e) {
+                        /* The executor will throw the exception at the end */ }
 
                     @Override
                     public boolean isSubmitsEnds() {
                         return count.get()==nbrRows;
                     }
-        };
+
+                    @Override
+                    public void processAggregation(String[] els) {
+                        expectedCount.accumulateAndGet(els.length, (left, right) -> left+right );
+                    }
+                };
 
         System.out.println("Starting Parallel processing...");
         processRows.printLog(0, 100);
@@ -57,6 +69,7 @@ public class BufferedBatchFlowControlExecutorTest {
         System.out.println("Parallel processing done in "+((System.currentTimeMillis()-now)/1000.0)+" seconds");
         Collections.sort(expectedValues);
         Collections.sort(result);
+        Assert.assertEquals( nbrRows, expectedCount.get() );
         Assert.assertArrayEquals( expectedValues.toArray(), result.toArray() );
     }
     private String generateRow(int i){

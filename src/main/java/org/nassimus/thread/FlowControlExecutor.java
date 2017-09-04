@@ -1,15 +1,11 @@
 package org.nassimus.thread;
 
 import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
 
 /*
 * @author : Nassim MOUALEK
@@ -36,7 +32,6 @@ public abstract class FlowControlExecutor<V> {
     private final AtomicInteger counterForName = new AtomicInteger();
 
     private Timer timer = null;
-    private BufferedBatchCallable<V> callable;
     protected Object emptyQueueLock = new Object();
     /**
      * Name examples :
@@ -78,8 +73,12 @@ public abstract class FlowControlExecutor<V> {
         }
     }
 
-    public void aggregate(V elementToAggregate) {
-        processAggregation(elementToAggregate);
+    void aggregate(V elementToAggregate) {
+        try {
+            processAggregation(elementToAggregate);
+        }catch (Exception e){
+            pushException(e);
+        }
         semaphore.release();
         synchronized (this) {
             if (!isQueueEmpty()) {

@@ -1,16 +1,20 @@
 package org.nassimus.thread;
 
-import java.util.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
 * */
-public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExecutor<V> {
+public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extends FlowControlExecutor<ArrayOfType> {
 
-    private BufferedBatchCallable<V> callable;
-    private List<V> buffer;
+    private BufferedBatchCallable<Type> callable;
+    private List<Type> buffer;
     private int bufferSize;
+    private final Class type;
     /**
      * Name examples :
      * </p>
@@ -25,25 +29,34 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
      * @param maxQueueSize
      * @param name
      */
-    public BufferedBatchFlowControlExecutor(BufferedBatchCallable<V> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
+    public BufferedBatchFlowControlExecutor(BufferedBatchCallable<Type> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
         super(nbThreads, maxQueueSize, name);
         this.bufferSize = bufferSize;
         this.callable = callable;
         this.buffer = new ArrayList<>();
+        this.type = getGenericType();
     }
 
     public BufferedBatchFlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this(null,0, nbThreads, maxQueueSize, name );
     }
-
-    public void submitWithException(V params) throws Throwable {
+    private Class getGenericType(){
+        Class clz = getClass();
+        java.lang.reflect.Type genericType;
+        while((genericType = clz.getGenericSuperclass())!=null &&
+                !(ParameterizedType.class.isAssignableFrom(genericType.getClass()))){
+            clz = clz.getSuperclass();
+        }
+        return (Class)((ParameterizedType) clz.getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+    public void submitWithException(Type params) throws Throwable {
         submit(params);
         if (executionExceptions.size() > 0) {
             throw executionExceptions.poll();
         }
     }
 
-    public void submit(V params) throws InterruptedException {
+    public void submit(Type params) throws InterruptedException {
         if (isSubmitsEnds())
             throw new RuntimeException("No more task accepted");
         synchronized (buffer){
@@ -59,16 +72,18 @@ public abstract class BufferedBatchFlowControlExecutor<V> extends FlowControlExe
         synchronized (buffer){
             if (buffer.isEmpty())
                 return;
-            final V[] vals = (V[]) buffer.toArray();
+            final Type[] vals = (Type[]) buffer.toArray();
+            Type[] valsWithRightType = (Type[]) Array.newInstance(type, vals.length);
+            for (int i=0;i<vals.length;i++)
+                valsWithRightType[i] = vals[i];
             buffer.clear();
-
-            submit(new Callable<V>() {
+            Callable<ArrayOfType> newCall = new Callable() {
                 @Override
-                public V call() throws Exception {
-                    callable.call(vals);
-                    return null;
+                public ArrayOfType call() throws Exception {
+                    return (ArrayOfType) callable.call(valsWithRightType);
                 }
-            });
+            };
+            submit(newCall);
         }
     }
 

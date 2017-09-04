@@ -10,6 +10,10 @@ public abstract class Callable<V> implements Runnable {
         this.executorWithFlowControl = executorWithFlowControl;
     }
 
+    public FlowControlExecutor<V> getExecutorWithFlowControl() {
+        return executorWithFlowControl;
+    }
+
     @Override
     public void run() {
         try {

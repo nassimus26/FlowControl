@@ -32,9 +32,11 @@ public class BufferedBatchFlowControlExecutorTest {
         BufferedBatchFlowControlExecutor<String, String[]> processRows =
                 new BufferedBatchFlowControlExecutor<>(
                         values -> {
+                            ArrayList<String> tmp = new ArrayList<>();
                             for ( int i=0; i<values.length; i++ ) {
-                                result.add(transformRow(values[i]));
+                                tmp.add(transformRow(values[i]));
                             }
+                            result.addAll(tmp);
                             return values;
                         }, 2000, BufferedBatchFlowControlExecutor.getNbCores(), 1000, "processRows") {
 

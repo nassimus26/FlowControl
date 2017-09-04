@@ -27,26 +27,25 @@ public void testFlowControl() throws Throwable {
     AtomicInteger count = new AtomicInteger();
     int nbrRows = 2_000_000;
     final List<String> expectedValues = new ArrayList<>();
+    long now = System.currentTimeMillis();
     for (int i=0;i<nbrRows;i++)
         expectedValues.add(transformRow(generateRow(i)));
+    double processDurationWithOneThread = ((System.currentTimeMillis()-now)/1000.0);
     final AtomicInteger expectedCount = new AtomicInteger();
     final List<String> result = new Vector<>();
     BufferedBatchFlowControlExecutor<String, String[]> processRows =
             new BufferedBatchFlowControlExecutor<>(
-
-                new BufferedBatchCallable<String>() {
-                    @Override
-                    public String[] call(String[] values) throws Exception {
+                    values -> {
                         for ( int i=0; i<values.length; i++ ) {
                             result.add(transformRow(values[i]));
                         }
                         return values;
-                    }
-                }, 100, BufferedBatchFlowControlExecutor.getNbCores(), 5000, "processRows") {
+                    }, 2000, BufferedBatchFlowControlExecutor.getNbCores(), 1000, "processRows") {
 
                 @Override
                 public void handleException(Exception e) {
-                    /* The executor will throw the exception at the end */ }
+                    /* The executor will throw the exception at the end if any exception */
+                }
 
                 @Override
                 public boolean isSubmitsEnds() {
@@ -61,7 +60,7 @@ public void testFlowControl() throws Throwable {
 
     System.out.println("Starting Parallel processing...");
     processRows.printLog(0, 100);
-    long now = System.currentTimeMillis();
+    now = System.currentTimeMillis();
     while (count.get()<nbrRows){
         try {
             processRows.submit("row_"+count.get());
@@ -71,7 +70,10 @@ public void testFlowControl() throws Throwable {
         }
     }
     processRows.waitAndFlushAndShutDown();
-    System.out.println("Parallel processing done in "+((System.currentTimeMillis()-now)/1000.0)+" seconds");
+    double parallelDuration = ((System.currentTimeMillis()-now)/1000.0);
+    System.out.println("Parallel processing done in "+ parallelDuration +
+            " seconds, instead of "+processDurationWithOneThread+" seconds on 1 Thread ("+
+            (int)(processDurationWithOneThread*100/parallelDuration)+"% faster)");
     Collections.sort(expectedValues);
     Collections.sort(result);
     Assert.assertEquals( nbrRows, expectedCount.get() );
@@ -82,8 +84,8 @@ private String generateRow(int i){
 }
 
 private String transformRow(String row){// some CPU operations
-    return row.replaceAll("row", "replaceMe").replaceAll("_", " ")
-            .replaceAll("replaceMe", "ligne");
+    return row.replaceAll("row", "replaceMe").replaceAll("_", "!")
+            .replaceAll("replaceMe", "ligne").replaceAll("!", "_");
 }
 
 ```

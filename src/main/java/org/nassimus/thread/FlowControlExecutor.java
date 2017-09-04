@@ -214,11 +214,11 @@ public abstract class FlowControlExecutor<V> {
         sb.append(", Queue : ");
         sb.append((queue > 0 ? queue : 0) + space, 0, 4);
         sb.append(", Speed/Sec :");
-        sb.append(" Current="+decimalFormat.format(speedNbTaskBySec * chunkSize) + space, 0, 10);
+        sb.append(" Current="+decimalFormat.format(speedNbTaskBySec * chunkSize) + space, 0, 20);
         sb.append(" - ");
-        sb.append(" Avg="+decimalFormat.format(speedAvgNbTaskBySec * chunkSize) + space, 0, 10);
+        sb.append(" Avg="+decimalFormat.format(speedAvgNbTaskBySec * chunkSize) + space, 0, 20);
         sb.append(", Done : ");
-        sb.append(decimalFormat.format(nbTaskExecutedCurr * chunkSize) + space, 0, 12);
+        sb.append(decimalFormat.format(nbTaskExecutedCurr * chunkSize) + space, 0, 14);
         sb.append(", ");
         sb.append(((((double) timeMilliCurr) - timeMilliStart) / 1000) + space, 0, 8);
         sb.append(" Mem (Mb):");

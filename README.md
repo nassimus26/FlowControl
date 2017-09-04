@@ -8,7 +8,7 @@ Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execu
 
 - Aggregation (Map reduce)
 
-- Fixed BackPresure Queue
+- Fixed Blocking Queue for BackPresure 
 
 - Fixed BufferedBatch processing 
 

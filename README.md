@@ -6,7 +6,7 @@ Main classes :
 
 **FlowContorlExecutor** 
 
-**BufferedBatchFlowContorlExecutor** exemple :
+**BufferedBatchFlowControlExecutor** exemple :
 ```java
 @Test
 public void testFlowControl() throws Throwable {

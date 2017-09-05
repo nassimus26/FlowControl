@@ -2,10 +2,8 @@ package org.flowcontrol;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nassimus.thread.BufferedBatchCallable;
 import org.nassimus.thread.BufferedBatchFlowControlExecutor;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

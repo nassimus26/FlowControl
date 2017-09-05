@@ -30,7 +30,7 @@ public class BufferedBatchFlowControlExecutorTest {
         for (String row : rows)
             expectedValues.add(transformRow(row));
         double processDurationWithOneThread = ((System.currentTimeMillis()-now)/1000.0);
-        final AtomicInteger expectedCount = new AtomicInteger();
+
         final List<String> result = new Vector<>();
         BufferedBatchFlowControlExecutor<String, String[]> processRows =
                 new BufferedBatchFlowControlExecutor<>(
@@ -40,7 +40,6 @@ public class BufferedBatchFlowControlExecutorTest {
                                 tmp.add(transformRow(values[i]));
                             }
                             result.addAll(tmp);
-                            return values;
                         }, 1000, BufferedBatchFlowControlExecutor.getNbCores(), 500, "processRows") {
 
                     @Override
@@ -53,10 +52,6 @@ public class BufferedBatchFlowControlExecutorTest {
                         return count.get()==nbrRows;
                     }
 
-                    @Override
-                    public void processAggregation(String[] els) {
-                        expectedCount.accumulateAndGet(els.length, (left, right) -> left+right );
-                    }
                 };
 
         System.out.println("Starting Parallel processing...");
@@ -77,7 +72,6 @@ public class BufferedBatchFlowControlExecutorTest {
                 (int)(processDurationWithOneThread*100/parallelDuration)+"% faster)");
         Collections.sort(expectedValues);
         Collections.sort(result);
-        Assert.assertEquals( nbrRows, expectedCount.get() );
         Assert.assertArrayEquals( expectedValues.toArray(), result.toArray() );
     }
     private String generateRow(int i){

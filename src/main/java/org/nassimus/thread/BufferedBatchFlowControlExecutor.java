@@ -79,8 +79,8 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
             buffer.clear();
             Callable<ArrayOfType> newCall = new Callable() {
                 @Override
-                public ArrayOfType call() throws Exception {
-                    return (ArrayOfType) callable.call(valsWithRightType);
+                public void call() throws Exception {
+                    callable.call(valsWithRightType);
                 }
             };
             submit(newCall);

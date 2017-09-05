@@ -63,22 +63,11 @@ public abstract class FlowControlExecutor<V> {
 
     void pushException(Exception e) {
         executionExceptions.add(e);
-        semaphore.release();
         handleException(e);
-        synchronized (this) {
-            if (semaphore.availablePermits() != nbTotalTasks) {
-                return;
-            }
-            notify();
-        }
+        release();
     }
 
-    void aggregate(V elementToAggregate) {
-        try {
-            processAggregation(elementToAggregate);
-        }catch (Exception e){
-            pushException(e);
-        }
+    void release() {
         semaphore.release();
         synchronized (this) {
             if (!isQueueEmpty()) {
@@ -93,9 +82,6 @@ public abstract class FlowControlExecutor<V> {
     }
     public boolean isQueueEmpty(){
         return semaphore.availablePermits() == nbTotalTasks;
-    }
-
-    protected void processAggregation(V elementToAggregate) {
     }
 
     public void submitWithException(Callable<V> callable) throws Throwable {

@@ -4,5 +4,5 @@ package org.nassimus.thread;
 * cd_boite@yahoo.fr
 * */
 public interface BufferedBatchCallable<V>  {
-    public abstract V[] call(V[] batchValues) throws Exception;
+    public abstract void call(V[] batchValues) throws Exception;
 }

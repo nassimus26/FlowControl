@@ -17,12 +17,13 @@ public abstract class Callable<V> implements Runnable {
     @Override
     public void run() {
         try {
-            executorWithFlowControl.aggregate(call());
+            call();
+            executorWithFlowControl.release();
         } catch (Exception e) {
             executorWithFlowControl.pushException(e);
         }
     }
 
-    public abstract V call() throws Exception;
+    public abstract void call() throws Exception;
 
 }

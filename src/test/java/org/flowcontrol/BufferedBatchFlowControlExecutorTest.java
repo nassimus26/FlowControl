@@ -24,11 +24,12 @@ public class BufferedBatchFlowControlExecutorTest {
         for (int i=0;i<nbrRows;i++)
             rows.add(generateRow(i));
         final List<String> expectedValues = new ArrayList<>();
+        System.out.println("Starting 1 Thread processing...");
         long now = System.currentTimeMillis();
         for (String row : rows)
             expectedValues.add(transformRow(row));
         double processDurationWithOneThread = ((System.currentTimeMillis()-now)/1000.0);
-
+        System.out.println("1 Thread processing takes "+ processDurationWithOneThread +" seconds");
         final List<String> result = new Vector<>();
         BufferedBatchFlowControlExecutor<String, String[]> processRows =
                 new BufferedBatchFlowControlExecutor<>(

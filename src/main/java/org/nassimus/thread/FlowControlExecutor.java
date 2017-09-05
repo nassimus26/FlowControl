@@ -64,7 +64,6 @@ public abstract class FlowControlExecutor<V> {
     void pushException(Exception e) {
         executionExceptions.add(e);
         handleException(e);
-        release();
     }
 
     void release() {

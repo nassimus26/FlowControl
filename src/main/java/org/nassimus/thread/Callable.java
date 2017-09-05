@@ -18,9 +18,10 @@ public abstract class Callable<V> implements Runnable {
     public void run() {
         try {
             call();
-            executorWithFlowControl.release();
         } catch (Exception e) {
             executorWithFlowControl.pushException(e);
+        } finally {
+            executorWithFlowControl.release();
         }
     }
 

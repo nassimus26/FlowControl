@@ -4,9 +4,7 @@ Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execu
 
 **Features :** 
 
-- Exceptions handling
-
-- Result Aggregation
+- Threads Exceptions handling
 
 - Fixed Blocking Queue for BackPresure 
 

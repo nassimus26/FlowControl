@@ -10,7 +10,7 @@ Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execu
 
 - Fixed BufferedBatch processing :
         
-     * Will submit the callable when the buffer is ready (full), extremely useful for small operations)
+     * Will submit the callable when the buffer is ready (full), extremely useful to reduce Threads context switching)
 
 Main classes :
 

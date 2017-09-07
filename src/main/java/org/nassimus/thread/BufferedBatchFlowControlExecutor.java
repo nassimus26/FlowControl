@@ -122,7 +122,7 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
                 }
             }
         }
-        executor.shutdown();
+        //executor.shutdown();
         printLogStop();
     }
 

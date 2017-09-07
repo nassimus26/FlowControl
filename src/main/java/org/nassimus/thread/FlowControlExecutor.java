@@ -69,19 +69,12 @@ public abstract class FlowControlExecutor<V> {
         handleException(e);
     }
 
-    private AtomicInteger releaseCount = new AtomicInteger();
     void releaseSemaphore() {
-        releaseCount.getAndIncrement();
-        if (releaseCount.get()==releaseSize || isSubmitsEnds()) {
-            synchronized (this) {
-                for (int i = 0; i < releaseCount.get(); i++)
-                    semaphore.release();
+        semaphore.release();
+        if (isQueueEmpty()) {
+            synchronized (emptyQueueLock){
+                emptyQueueLock.notifyAll();
             }
-            releaseCount.set(0);
-            if (isQueueEmpty())
-                synchronized (emptyQueueLock){
-                    emptyQueueLock.notifyAll();
-                }
         }
     }
     public boolean isQueueEmpty(){
@@ -103,10 +96,10 @@ public abstract class FlowControlExecutor<V> {
     }
     public abstract boolean isSubmitsEnds();
     private void waitAndShutdownWithException(boolean throwException) throws Throwable {
-        synchronized (this) {
+        synchronized (emptyQueueLock) {
             if (!isQueueEmpty()){
                 try {
-                    wait();
+                    emptyQueueLock.wait();
                 }finally {
                     executor.shutdown();
                     if (throwException && executionExceptions.size() > 0)

@@ -19,7 +19,7 @@ public abstract class FlowControlExecutor<V> {
 
     private DecimalFormat decimalFormat = new DecimalFormat();
 
-    protected Queue<Throwable> executionExceptions = new LinkedBlockingQueue<Throwable>();
+    protected Queue<Exception> executionExceptions = new LinkedBlockingQueue<Exception>();
 
     protected Semaphore semaphore = null;
     private String name = null;
@@ -140,7 +140,7 @@ public abstract class FlowControlExecutor<V> {
         return nbTotalTasks;
     }
 
-    public Queue<Throwable> getExecutionExceptions() {
+    public Queue<Exception> getExecutionExceptions() {
         return executionExceptions;
     }
 

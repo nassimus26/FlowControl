@@ -102,7 +102,7 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
     public void waitAndFlushAndShutDownWithException() throws Throwable {
         waitAndFlushAndShutDownWithException(true);
     }
-    private void waitAndFlushAndShutDownWithException(boolean throwException) throws Throwable {
+    private void waitAndFlushAndShutDownWithException(boolean throwException) throws Exception {
         while(true){
             synchronized (emptyQueueLock) {
                 try {

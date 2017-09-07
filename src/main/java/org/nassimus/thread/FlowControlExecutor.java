@@ -66,7 +66,7 @@ public abstract class FlowControlExecutor<V> {
         handleException(e);
     }
 
-    void release() {
+    void releaseSemaphore() {
         semaphore.release();
         synchronized (this) {
             if (!isQueueEmpty()) {

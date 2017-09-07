@@ -21,7 +21,7 @@ public abstract class Callable<V> implements Runnable {
         } catch (Exception e) {
             executorWithFlowControl.pushException(e);
         } finally {
-            executorWithFlowControl.release();
+            executorWithFlowControl.releaseSemaphore();
         }
     }
 

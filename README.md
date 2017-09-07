@@ -22,7 +22,6 @@ Example :
 ```java
 @Test
 public void testFlowControl() throws Exception {
-    AtomicInteger count = new AtomicInteger();
     int nbrRows = 2_000_000;
     final List<String> rows = new ArrayList<>();
     for (int i=0;i<nbrRows;i++)
@@ -35,13 +34,13 @@ public void testFlowControl() throws Exception {
     double processDurationWithOneThread = ((System.currentTimeMillis()-now)/1000.0);
     System.out.println("1 Thread processing takes "+ processDurationWithOneThread +" seconds");
     final List<String> result = new Vector<>();
+    AtomicBoolean atomicBoolean = new AtomicBoolean();
     BufferedBatchFlowControlExecutor<String, String[]> processRows =
             new BufferedBatchFlowControlExecutor<>(
                     values -> {
                         ArrayList<String> tmp = new ArrayList<>();
-                        for ( int i=0; i<values.length; i++ ) {
+                        for ( int i=0; i<values.length; i++ )
                             tmp.add(transformRow(values[i]));
-                        }
                         result.addAll(tmp);
                     }, 1000, BufferedBatchFlowControlExecutor.getNbCores(), 500, "processRows") {
 
@@ -52,7 +51,7 @@ public void testFlowControl() throws Exception {
 
                 @Override
                 public boolean isSubmitsEnds() {
-                    return count.get()==nbrRows;
+                    return atomicBoolean.get();
                 }
 
             };
@@ -67,7 +66,7 @@ public void testFlowControl() throws Exception {
             e.printStackTrace();
         }
     }
-    count.set(rows.size());
+    atomicBoolean.set(true);
     processRows.waitAndFlushAndShutDown();
     double parallelDuration = ((System.currentTimeMillis()-now)/1000.0);
     System.out.println("Parallel processing takes "+ parallelDuration +

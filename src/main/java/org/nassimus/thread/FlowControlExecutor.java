@@ -1,6 +1,7 @@
 package org.nassimus.thread;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,6 +33,7 @@ public abstract class FlowControlExecutor<V> {
     private final AtomicInteger counterForName = new AtomicInteger();
 
     private Timer timer = null;
+    private int releaseSize;
     protected Object emptyQueueLock = new Object();
     /**
      * Name examples :
@@ -48,6 +50,7 @@ public abstract class FlowControlExecutor<V> {
      */
     public FlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this.timeMilliStart = System.currentTimeMillis();
+        this.releaseSize = maxQueueSize;
         this.nbTotalTasks = nbThreads + maxQueueSize;
         this.semaphore = new Semaphore(nbTotalTasks);
         this.name = name;
@@ -66,18 +69,21 @@ public abstract class FlowControlExecutor<V> {
         handleException(e);
     }
 
+    private AtomicInteger releaseCount = new AtomicInteger();
     void releaseSemaphore() {
-        semaphore.release();
-        synchronized (this) {
-            if (!isQueueEmpty()) {
-                return;
+        releaseCount.getAndIncrement();
+        if (releaseCount.get()==releaseSize || isSubmitsEnds()) {
+            synchronized (this) {
+                for (int i = 0; i < releaseCount.get(); i++) {
+                    semaphore.release();
+                }
             }
-            notify();
+            releaseCount.set(0);
+            if (isQueueEmpty())
+                synchronized (emptyQueueLock){
+                    emptyQueueLock.notifyAll();
+                }
         }
-        if (isQueueEmpty())
-            synchronized (emptyQueueLock){
-                emptyQueueLock.notifyAll();
-            }
     }
     public boolean isQueueEmpty(){
         return semaphore.availablePermits() == nbTotalTasks;

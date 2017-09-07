@@ -104,13 +104,15 @@ public abstract class FlowControlExecutor<V> {
     public abstract boolean isSubmitsEnds();
     private void waitAndShutdownWithException(boolean throwException) throws Throwable {
         synchronized (this) {
-            if (semaphore.availablePermits() != nbTotalTasks) {
-                wait();
+            if (!isQueueEmpty()){
+                try {
+                    wait();
+                }finally {
+                    executor.shutdown();
+                    if (throwException && executionExceptions.size() > 0)
+                        throw executionExceptions.poll();
+                }
             }
-        }
-        executor.shutdown();
-        if (throwException && executionExceptions.size() > 0) {
-            throw executionExceptions.poll();
         }
     }
     public void waitAndShutdownWithException() throws Throwable {

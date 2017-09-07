@@ -74,9 +74,8 @@ public abstract class FlowControlExecutor<V> {
         releaseCount.getAndIncrement();
         if (releaseCount.get()==releaseSize || isSubmitsEnds()) {
             synchronized (this) {
-                for (int i = 0; i < releaseCount.get(); i++) {
+                for (int i = 0; i < releaseCount.get(); i++)
                     semaphore.release();
-                }
             }
             releaseCount.set(0);
             if (isQueueEmpty())

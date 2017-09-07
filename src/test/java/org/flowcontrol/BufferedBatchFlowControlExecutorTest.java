@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /*
@@ -18,7 +19,6 @@ public class BufferedBatchFlowControlExecutorTest {
 
     @Test
     public void testFlowControl() throws Exception {
-        AtomicInteger count = new AtomicInteger();
         int nbrRows = 2_000_000;
         final List<String> rows = new ArrayList<>();
         for (int i=0;i<nbrRows;i++)
@@ -31,6 +31,7 @@ public class BufferedBatchFlowControlExecutorTest {
         double processDurationWithOneThread = ((System.currentTimeMillis()-now)/1000.0);
         System.out.println("1 Thread processing takes "+ processDurationWithOneThread +" seconds");
         final List<String> result = new Vector<>();
+        AtomicBoolean atomicBoolean = new AtomicBoolean();
         BufferedBatchFlowControlExecutor<String, String[]> processRows =
                 new BufferedBatchFlowControlExecutor<>(
                         values -> {
@@ -48,7 +49,7 @@ public class BufferedBatchFlowControlExecutorTest {
 
                     @Override
                     public boolean isSubmitsEnds() {
-                        return count.get()==nbrRows;
+                        return atomicBoolean.get();
                     }
 
                 };
@@ -63,7 +64,7 @@ public class BufferedBatchFlowControlExecutorTest {
                 e.printStackTrace();
             }
         }
-        count.set(rows.size());
+        atomicBoolean.set(true);
         processRows.waitAndFlushAndShutDown();
         double parallelDuration = ((System.currentTimeMillis()-now)/1000.0);
         System.out.println("Parallel processing takes "+ parallelDuration +

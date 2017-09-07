@@ -6,7 +6,7 @@ Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execu
 
 - Threads Exceptions handling
 
-- Fixed Blocking Queue for BackPresure 
+- Fixed Blocking Queue for BackPresure control
 
 - Fixed BufferedBatch processing :
         

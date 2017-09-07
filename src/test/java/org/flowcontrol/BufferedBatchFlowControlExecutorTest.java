@@ -36,9 +36,8 @@ public class BufferedBatchFlowControlExecutorTest {
                 new BufferedBatchFlowControlExecutor<>(
                         values -> {
                             ArrayList<String> tmp = new ArrayList<>();
-                            for ( int i=0; i<values.length; i++ ) {
+                            for ( int i=0; i<values.length; i++ )
                                 tmp.add(transformRow(values[i]));
-                            }
                             result.addAll(tmp);
                         }, 1000, BufferedBatchFlowControlExecutor.getNbCores(), 500, "processRows") {
 

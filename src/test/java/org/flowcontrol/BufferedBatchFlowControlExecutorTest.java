@@ -2,6 +2,7 @@ package org.flowcontrol;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nassimus.thread.BufferedBatchCallable;
 import org.nassimus.thread.BufferedBatchFlowControlExecutor;
 
 import java.util.ArrayList;
@@ -9,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /*
 * @author : Nassim MOUALEK
@@ -34,11 +34,14 @@ public class BufferedBatchFlowControlExecutorTest {
         AtomicBoolean isProcessingEnds = new AtomicBoolean();
         BufferedBatchFlowControlExecutor<String, String[]> processRows =
                 new BufferedBatchFlowControlExecutor<>(
-                        values -> {
-                            ArrayList<String> tmp = new ArrayList<>();
-                            for ( int i=0; i<values.length; i++ )
-                                tmp.add(transformRow(values[i]));
-                            result.addAll(tmp);
+                        new BufferedBatchCallable<String>() {
+                            @Override
+                            public void call(String[] batchValues) throws Exception {
+                                ArrayList<String> tmp = new ArrayList<>();
+                                for ( int i=0; i<batchValues.length; i++ )
+                                    tmp.add(transformRow(batchValues[i]));
+                                result.addAll(tmp);
+                            }
                         }, 1000, BufferedBatchFlowControlExecutor.getNbCores(), 500, "processRows") {
 
                     @Override

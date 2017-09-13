@@ -18,6 +18,15 @@ Main classes :
 
 - **BufferedBatchFlowControlExecutor** 
 
+**Maven Dependency**
+```java
+<dependency>
+    <groupId>io.github.nassimus26</groupId>
+    <artifactId>FastScanner</artifactId>
+    <version>1.0</version> 
+</dependency>
+```    
+
 Example :
 ```java
 @Test

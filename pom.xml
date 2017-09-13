@@ -6,10 +6,20 @@
     <groupId>io.github.nassimus26</groupId>
     <artifactId>FlowControl</artifactId>
     <version>1.0</version>
-    <!--    LGPL license, Version 3.0
-            https://github.com/nassimus26/FlowControl
-            Nassim MOUALEK
-            cd_boite@yahoo.fr   -->
+    <licenses>
+        <license>
+            <name>LGPL license, Version 3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.fr.html</url>
+        </license>
+    </licenses>
+    <name>FlowControl</name>
+    <description>Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execution</description>
+    <developers>
+        <developer>
+            <name>Nassim MOUALEK</name>
+            <email>cd_boite@yahoo.fr</email>
+        </developer>
+    </developers>
     <build>
         <plugins>
             <plugin>

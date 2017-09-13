@@ -73,7 +73,7 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
             if (buffer.isEmpty())
                 return;
             final Type[] vals = (Type[]) buffer.toArray();
-            Type[] valsWithRightType = (Type[]) Array.newInstance(type, vals.length);
+            final Type[] valsWithRightType = (Type[]) Array.newInstance(type, vals.length);
             for (int i=0;i<vals.length;i++)
                 valsWithRightType[i] = vals[i];
             buffer.clear();
@@ -122,7 +122,7 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
                 }
             }
         }
-        //executor.shutdown();
+        executor.shutdown();
         printLogStop();
     }
 

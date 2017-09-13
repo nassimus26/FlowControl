@@ -22,7 +22,7 @@ Main classes :
 ```java
 <dependency>
     <groupId>io.github.nassimus26</groupId>
-    <artifactId>FastScanner</artifactId>
+    <artifactId>FlowControl</artifactId>
     <version>1.0</version> 
 </dependency>
 ```    

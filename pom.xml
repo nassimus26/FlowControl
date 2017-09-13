@@ -19,7 +19,7 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git:nassimus26@https://github.com/FlowControl.git</connection>
+        <connection>scm:git:git:nassimus26//https://github.com/FlowControl.git</connection>
         <developerConnection>scm:git:nassimus26@https://github.com/FlowControl.git</developerConnection>
         <url>https://github.com/nassimus26/FlowControl</url>
         <tag>HEAD</tag>

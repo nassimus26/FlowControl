@@ -20,6 +20,9 @@
             <email>cd_boite@yahoo.fr</email>
         </developer>
     </developers>
+    <scm>
+        <url>https://github.com/nassimus26/FlowControl</url>
+    </scm>
     <build>
         <plugins>
             <plugin>

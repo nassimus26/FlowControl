@@ -13,7 +13,7 @@
         </license>
     </licenses>
     <name>FlowControl</name>
-    <description>Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execution</description>
+    <description>Powerful Thread Pool Executor with Flow Control and BatchBuffer execution</description>
     <developers>
         <developer>
             <name>Nassim MOUALEK</name>

@@ -1,6 +1,6 @@
 # FlowControl
 
-Simple but powerful Thread Pool Executor with Flow Control and BatchBuffer execution
+Powerful Thread Pool Executor with Flow Control and BatchBuffer execution
 
 **Features :** 
 

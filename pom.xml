@@ -20,7 +20,7 @@
     </developers>
     <scm>
         <connection>scm:git:git://https://github.com/nassimus26/FlowControl.git</connection>
-        <developerConnection>scm:git:Delphiwin32@https://github.com:nassimus26/FlowControl.git</developerConnection>
+        <developerConnection>scm:git:git@https://github.com:nassimus26/FlowControl.git</developerConnection>
         <url>https://github.com/nassimus26/FlowControl</url>
         <tag>HEAD</tag>
     </scm>

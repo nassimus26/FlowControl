@@ -35,19 +35,7 @@ public abstract class FlowControlExecutor<V> {
     private Timer timer = null;
     private int releaseSize;
     protected Object emptyQueueLock = new Object();
-    /**
-     * Name examples :
-     * </p>
-     * Executor __ SPLITTER
-     * </p>
-     * Executor __|__ PROCESS
-     * </p>
-     * Executor __|__|__ WRITER
-     *
-     * @param nbThreads
-     * @param maxQueueSize
-     * @param name
-     */
+
     public FlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this.timeMilliStart = System.currentTimeMillis();
         this.releaseSize = maxQueueSize;

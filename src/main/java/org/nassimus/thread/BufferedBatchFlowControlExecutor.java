@@ -15,20 +15,7 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
     private List<Type> buffer;
     private int bufferSize;
     private final Class type;
-    /**
-     * Name examples :
-     * </p>
-     * Executor __ SPLITTER
-     * </p>
-     * Executor __|__ PROCESS
-     * </p>
-     * Executor __|__|__ WRITER
-     *
-     * @param callable
-     * @param nbThreads
-     * @param maxQueueSize
-     * @param name
-     */
+
     public BufferedBatchFlowControlExecutor(BufferedBatchCallable<Type> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
         super(nbThreads, maxQueueSize, name);
         this.bufferSize = bufferSize;

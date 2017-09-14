@@ -1,7 +1,6 @@
 package org.nassimus.thread;
 
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,7 +44,7 @@ public abstract class FlowControlExecutor<V> {
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nbThreads);
         executor.setThreadFactory(new ThreadFactory() {
             @Override
-            public Thread newThread(Runnable r) {
+            public Thread newThread(java.lang.Runnable r) {
                 return new Thread(r, name + "_" + counterForName.incrementAndGet());
             }
         });
@@ -69,7 +68,7 @@ public abstract class FlowControlExecutor<V> {
         return semaphore.availablePermits() == nbTotalTasks;
     }
 
-    public void submitWithException(Callable<V> callable) throws Throwable {
+    public void submitWithException(Callable callable) throws Throwable {
         submit(callable);
         if (executionExceptions.size() > 0) {
             throw executionExceptions.poll();
@@ -77,10 +76,10 @@ public abstract class FlowControlExecutor<V> {
     }
 
 
-    public void submit(Callable<V> callable) throws InterruptedException {
+    public void submit(Callable callable) throws InterruptedException {
+        Runnable<V> runnable = new Runnable<V>(this, callable);
         semaphore.acquire();
-        callable.setExecutorWithFlowControl(this);
-        executor.execute(callable);
+        executor.execute(runnable);
     }
     public abstract boolean isSubmitsEnds();
     private void waitAndShutdownWithException(boolean throwException) throws Throwable {
@@ -133,7 +132,7 @@ public abstract class FlowControlExecutor<V> {
         return executor.getTaskCount();
     }
 
-    public BlockingQueue<Runnable> getQueue() {
+    public BlockingQueue<java.lang.Runnable> getQueue() {
         return executor.getQueue();
     }
 

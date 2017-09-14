@@ -1,9 +1,9 @@
 package org.nassimus.thread;
 
-import java.lang.reflect.Array;
+import org.nassimus.thread.util.SimpleObjectPool;
+
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /*
 * @author : Nassim MOUALEK
@@ -13,15 +13,22 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
 
     private BufferedBatchCallable<Type> callable;
     private List<Type> buffer;
+    private SimpleObjectPool<List<Type>> buffersPool;
     private int bufferSize;
     private final Class type;
 
-    public BufferedBatchFlowControlExecutor(BufferedBatchCallable<Type> callable, int bufferSize, int nbThreads, int maxQueueSize, final String name) {
+    public BufferedBatchFlowControlExecutor(BufferedBatchCallable<Type> callable, final int bufferSize, int nbThreads, int maxQueueSize, final String name) {
         super(nbThreads, maxQueueSize, name);
         this.bufferSize = bufferSize;
         this.callable = callable;
         this.buffer = new ArrayList<>();
         this.type = getGenericType();
+        this.buffersPool = new SimpleObjectPool<List<Type>>(nbThreads){
+            @Override
+            public List<Type> createAnObject() {
+                return new ArrayList<>(bufferSize);
+            }
+        };
     }
 
     public BufferedBatchFlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
@@ -42,7 +49,6 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
             throw executionExceptions.poll();
         }
     }
-
     public void submit(Type params) throws InterruptedException {
         if (isSubmitsEnds())
             throw new RuntimeException("No more task accepted");
@@ -56,21 +62,21 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
     public abstract boolean isSubmitsEnds();
 
     private void process() throws InterruptedException{
-        synchronized (buffer){
+        if (!buffer.isEmpty())
+        synchronized (this){
             if (buffer.isEmpty())
                 return;
-            final Type[] vals = (Type[]) buffer.toArray();
-            final Type[] valsWithRightType = (Type[]) Array.newInstance(type, vals.length);
-            for (int i=0;i<vals.length;i++)
-                valsWithRightType[i] = vals[i];
+            final List<Type> newBuffer = buffersPool.checkOut();
+            newBuffer.clear();
+            newBuffer.addAll(buffer);
             buffer.clear();
-            Callable<ArrayOfType> newCall = new Callable() {
+            submit(new Callable() {
                 @Override
                 public void call() throws Exception {
-                    callable.call(valsWithRightType);
+                    callable.call(newBuffer);
+                    buffersPool.release(newBuffer);
                 }
-            };
-            submit(newCall);
+            });
         }
     }
 

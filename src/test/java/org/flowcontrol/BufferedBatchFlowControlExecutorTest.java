@@ -5,10 +5,7 @@ import org.junit.Test;
 import org.nassimus.thread.BufferedBatchCallable;
 import org.nassimus.thread.BufferedBatchFlowControlExecutor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /*
@@ -36,10 +33,10 @@ public class BufferedBatchFlowControlExecutorTest {
                 new BufferedBatchFlowControlExecutor<String, String[]>(
                         new BufferedBatchCallable<String>() {
                             @Override
-                            public void call(String[] batchValues) throws Exception {
+                            public void call(List<String> batchValues) throws Exception {
                                 ArrayList<String> tmp = new ArrayList<>();
-                                for ( int i=0; i<batchValues.length; i++ )
-                                    tmp.add(transformRow(batchValues[i]));
+                                for ( int i=0; i<batchValues.size(); i++ )
+                                    tmp.add(transformRow(batchValues.get(i)));
                                 result.addAll(tmp);
                             }
                         }, 1000, BufferedBatchFlowControlExecutor.getNbCores(), 500, "processRows") {

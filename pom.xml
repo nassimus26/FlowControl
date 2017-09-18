@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.nassimus26</groupId>
     <artifactId>FlowControl</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <licenses>
         <license>
             <name>LGPL license, Version 3.0</name>
@@ -23,7 +23,7 @@
         <connection>scm:git:git:https://github.com/nassimus26/FlowControl</connection>
         <developerConnection>scm:git:https://github.com/nassimus26/FlowControl</developerConnection>
         <url>https://github.com/nassimus26/FlowControl</url>
-        <tag>FlowControl-1.0.0m</tag>
+        <tag>FlowControl-1.0.0p</tag>
     </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

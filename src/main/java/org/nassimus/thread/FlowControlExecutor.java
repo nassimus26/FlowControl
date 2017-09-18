@@ -83,7 +83,7 @@ public abstract class FlowControlExecutor<V> {
         executor.execute(runnable);
     }
     public abstract boolean isSubmitsEnds();
-    private void waitAndShutdownWithException(boolean throwException) throws Throwable {
+    private void wait(boolean throwException, boolean shutdown) throws Exception {
         synchronized (emptyQueueLock) {
             if (!isQueueEmpty()){
                 try {
@@ -96,13 +96,13 @@ public abstract class FlowControlExecutor<V> {
             }
         }
     }
-    public void waitAndShutdownWithException() throws Throwable {
-        waitAndShutdownWithException(true);
+    public void waitWithException(boolean shutdown) throws Exception {
+        wait(true, shutdown);
     }
 
-    public void waitAndShutdown() throws InterruptedException {
+    public void wait(boolean shutdown) throws InterruptedException {
         try {
-            waitAndShutdownWithException(false);
+            wait(false, shutdown);
         } catch (Throwable e) {
             if (e instanceof InterruptedException)
                 throw (InterruptedException)e;

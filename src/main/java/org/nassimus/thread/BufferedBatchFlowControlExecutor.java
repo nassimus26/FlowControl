@@ -83,18 +83,18 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
         return isSubmitsEnds() && !buffer.isEmpty();
     }
 
-    public void waitAndFlushAndShutDown() throws InterruptedException {
+    public void waitAndFlushAndShutDown(boolean shutdown) throws InterruptedException {
         try {
-            waitAndFlushAndShutDownWithException(false);
+            waitAndFlushWithException(false, shutdown);
         } catch (Throwable e) {
             if (e instanceof InterruptedException)
                 throw (InterruptedException)e;
         }
     }
-    public void waitAndFlushAndShutDownWithException() throws Throwable {
-        waitAndFlushAndShutDownWithException(true);
+    public void waitAndFlushWithException(boolean shutdown) throws Throwable {
+        waitAndFlushWithException(true, shutdown);
     }
-    private void waitAndFlushAndShutDownWithException(boolean throwException) throws Exception {
+    private void waitAndFlushWithException(boolean throwException, boolean shutdown) throws Exception {
         while(true){
             synchronized (emptyQueueLock) {
                 try {

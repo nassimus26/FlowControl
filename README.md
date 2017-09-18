@@ -25,6 +25,7 @@ Main classes :
     <name>ossr</name>
     <url>https://oss.sonatype.org/service/local/repositories/releases/content/</url>
 </repository>
+............
 <dependency>
     <groupId>io.github.nassimus26</groupId>
     <artifactId>FlowControl</artifactId>

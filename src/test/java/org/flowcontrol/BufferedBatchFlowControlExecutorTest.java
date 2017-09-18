@@ -29,8 +29,8 @@ public class BufferedBatchFlowControlExecutorTest {
         System.out.println("1 Thread processing takes "+ processDurationWithOneThread +" seconds");
         final List<String> result = new Vector<>();
         final AtomicBoolean isProcessingEnds = new AtomicBoolean();
-        BufferedBatchFlowControlExecutor<String, String[]> processRows =
-                new BufferedBatchFlowControlExecutor<String, String[]>(
+        BufferedBatchFlowControlExecutor<String> processRows =
+                new BufferedBatchFlowControlExecutor<String>(
                         new BufferedBatchCallable<String>() {
                             @Override
                             public void call(List<String> batchValues) throws Exception {

@@ -3,30 +3,29 @@ package org.nassimus.thread;
 import org.nassimus.thread.util.SimpleObjectPool;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /*
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
 * */
-public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extends FlowControlExecutor<ArrayOfType> {
+public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExecutor<List<T>> {
 
-    private BufferedBatchCallable<Type> callable;
-    private List<Type> buffer;
-    private SimpleObjectPool<List<Type>> buffersPool;
+    private BufferedBatchCallable<T> callable;
+    private List<T> buffer;
+    private SimpleObjectPool<List<T>> buffersPool;
     private int bufferSize;
-    private final Class type;
 
-    public BufferedBatchFlowControlExecutor(BufferedBatchCallable<Type> callable, final int bufferSize, int nbThreads, int maxQueueSize, final String name) {
+    public BufferedBatchFlowControlExecutor(BufferedBatchCallable<T> callable, final int bufferSize, int nbThreads, int maxQueueSize, final String name) {
         super(nbThreads, maxQueueSize, name);
         this.bufferSize = bufferSize;
         this.callable = callable;
         this.buffer = new ArrayList<>();
-        this.type = getGenericType();
-        this.buffersPool = new SimpleObjectPool<List<Type>>(nbThreads){
+        this.buffersPool = new SimpleObjectPool<List<T>>(nbThreads){
             @Override
-            public List<Type> createAnObject() {
-                return new ArrayList<>(bufferSize);
+            public List<T> createAnObject() {
+                return new ArrayList<T>(bufferSize);
             }
         };
     }
@@ -34,22 +33,13 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
     public BufferedBatchFlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this(null,0, nbThreads, maxQueueSize, name );
     }
-    private Class getGenericType(){
-        Class clz = getClass();
-        java.lang.reflect.Type genericType;
-        while((genericType = clz.getGenericSuperclass())!=null &&
-                !(ParameterizedType.class.isAssignableFrom(genericType.getClass()))){
-            clz = clz.getSuperclass();
-        }
-        return (Class)((ParameterizedType) clz.getGenericSuperclass()).getActualTypeArguments()[0];
-    }
-    public void submitWithException(Type params) throws Throwable {
+    public void submitWithException(T params) throws Throwable {
         submit(params);
         if (executionExceptions.size() > 0) {
             throw executionExceptions.poll();
         }
     }
-    public void submit(Type params) throws InterruptedException {
+    public void submit(T params) throws InterruptedException {
         if (isSubmitsEnds())
             throw new RuntimeException("No more task accepted");
         synchronized (buffer){
@@ -66,7 +56,7 @@ public abstract class BufferedBatchFlowControlExecutor<Type, ArrayOfType> extend
         synchronized (this){
             if (buffer.isEmpty())
                 return;
-            final List<Type> newBuffer = buffersPool.checkOut();
+            final List<T> newBuffer = buffersPool.checkOut();
             newBuffer.clear();
             newBuffer.addAll(buffer);
             buffer.clear();

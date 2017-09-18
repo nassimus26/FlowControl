@@ -5,6 +5,7 @@ import org.nassimus.thread.util.SimpleObjectPool;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ThreadFactory;
 
 /*
 * @author : Nassim MOUALEK
@@ -16,9 +17,15 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
     private List<T> buffer;
     private SimpleObjectPool<List<T>> buffersPool;
     private int bufferSize;
-
+    public BufferedBatchFlowControlExecutor(BufferedBatchCallable<T> callable, final int bufferSize, int nbThreads, int maxQueueSize, final ThreadFactory threadFactory) {
+        super(nbThreads, maxQueueSize, threadFactory);
+        init(callable, bufferSize, nbThreads, maxQueueSize);
+    }
     public BufferedBatchFlowControlExecutor(BufferedBatchCallable<T> callable, final int bufferSize, int nbThreads, int maxQueueSize, final String name) {
         super(nbThreads, maxQueueSize, name);
+        init(callable, bufferSize, nbThreads, maxQueueSize);
+    }
+    private void init(BufferedBatchCallable<T> callable, final int bufferSize, int nbThreads, int maxQueueSize){
         this.bufferSize = bufferSize;
         this.callable = callable;
         this.buffer = new ArrayList<>();
@@ -28,7 +35,9 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
                 return new ArrayList<T>(bufferSize);
             }
         };
+
     }
+
 
     public BufferedBatchFlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this(null,0, nbThreads, maxQueueSize, name );

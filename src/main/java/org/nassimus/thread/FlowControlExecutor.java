@@ -29,25 +29,26 @@ public abstract class FlowControlExecutor<V> {
     private long timeMilliLast;
     private long nbTaskExecutedLast;
 
-    private final AtomicInteger counterForName = new AtomicInteger();
-
     private Timer timer = null;
     private int releaseSize;
     protected Object emptyQueueLock = new Object();
 
     public FlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
+        this(nbThreads, maxQueueSize, new ThreadFactory() {
+            @Override
+            public Thread newThread(java.lang.Runnable r) {
+                return new Thread(r, name + "_" + new AtomicInteger().incrementAndGet());
+            }
+        });
+    }
+    public FlowControlExecutor(int nbThreads, int maxQueueSize, final ThreadFactory threadFactory) {
         this.timeMilliStart = System.currentTimeMillis();
         this.releaseSize = maxQueueSize;
         this.nbTotalTasks = nbThreads + maxQueueSize;
         this.semaphore = new Semaphore(nbTotalTasks);
         this.name = name;
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nbThreads);
-        executor.setThreadFactory(new ThreadFactory() {
-            @Override
-            public Thread newThread(java.lang.Runnable r) {
-                return new Thread(r, name + "_" + counterForName.incrementAndGet());
-            }
-        });
+        executor.setThreadFactory(threadFactory);
     }
     public abstract void handleException(Exception e);
 

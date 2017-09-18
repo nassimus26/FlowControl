@@ -23,7 +23,7 @@ Main classes :
 <dependency>
     <groupId>io.github.nassimus26</groupId>
     <artifactId>FlowControl</artifactId>
-    <version>1.0.1</version> 
+    <version>1.0.2</version> 
 </dependency>
 ```    
 

@@ -64,7 +64,7 @@ public class BufferedBatchFlowControlExecutorTest {
             }
         }
         isProcessingEnds.set(true);
-        processRows.waitAndFlushAndShutDown();
+        processRows.waitAndFlush(true);
         double parallelDuration = ((System.currentTimeMillis()-now)/1000.0);
         System.out.println("Parallel processing takes "+ parallelDuration +
                 " seconds ("+ (int)(processDurationWithOneThread*100/parallelDuration)+"% faster)");

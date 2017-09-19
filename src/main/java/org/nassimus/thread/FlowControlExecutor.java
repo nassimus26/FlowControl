@@ -83,15 +83,18 @@ public abstract class FlowControlExecutor<V> {
         executor.execute(runnable);
     }
     public abstract boolean isSubmitsEnds();
-    private void wait(boolean throwException, boolean shutdown) throws Exception {
+    protected void wait(boolean throwException, boolean shutdown) throws Exception {
         synchronized (emptyQueueLock) {
             if (!isQueueEmpty()){
                 try {
                     emptyQueueLock.wait();
                 }finally {
-                    executor.shutdown();
-                    if (throwException && executionExceptions.size() > 0)
-                        throw executionExceptions.poll();
+                    if (shutdown) {
+                        executor.shutdown();
+                        printLogStop();
+                        if (throwException && executionExceptions.size() > 0)
+                            throw executionExceptions.poll();
+                    }
                 }
             }
         }

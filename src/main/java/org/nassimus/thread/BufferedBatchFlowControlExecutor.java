@@ -79,22 +79,30 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
         }
     }
 
+
+
+
     private boolean shouldFlush(){
         return isSubmitsEnds() && !buffer.isEmpty();
     }
 
-    public void waitAndFlushAndShutDown(boolean shutdown) throws InterruptedException {
+    public void waitAndFlush(boolean shutdown) throws InterruptedException {
         try {
-            waitAndFlushWithException(false, shutdown);
+            waitAndFlush(false, shutdown);
         } catch (Throwable e) {
             if (e instanceof InterruptedException)
                 throw (InterruptedException)e;
         }
     }
     public void waitAndFlushWithException(boolean shutdown) throws Throwable {
-        waitAndFlushWithException(true, shutdown);
+        waitAndFlush(true, shutdown);
     }
-    private void waitAndFlushWithException(boolean throwException, boolean shutdown) throws Exception {
+
+    @Override
+    protected void wait(boolean throwException, boolean shutdown) throws Exception {
+        waitAndFlush(throwException, shutdown);
+    }
+    protected void waitAndFlush(boolean throwException, boolean shutdown) throws Exception {
         while(true){
             synchronized (emptyQueueLock) {
                 try {
@@ -114,8 +122,10 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
                 }
             }
         }
-        executor.shutdown();
-        printLogStop();
+        if (shutdown) {
+            executor.shutdown();
+            printLogStop();
+        }
     }
 
     @Override

@@ -32,7 +32,6 @@ public abstract class FlowControlExecutor<V> {
     private Timer timer = null;
     private int releaseSize;
     protected Object emptyQueueLock = new Object();
-    protected Object fullQueueLock = new Object();
 
     public FlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this(nbThreads, maxQueueSize, new ThreadFactory() {
@@ -60,10 +59,6 @@ public abstract class FlowControlExecutor<V> {
 
     void releaseSemaphore() {
         semaphore.release();
-        synchronized (fullQueueLock){
-                fullQueueLock.notify();
-
-        }
         if (isQueueEmpty()) {
             synchronized (emptyQueueLock){
                 emptyQueueLock.notifyAll();

@@ -3,18 +3,18 @@ package org.nassimus.thread;
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
 * */
-class Runnable<V> implements java.lang.Runnable {
+class Worker<V> implements java.lang.Runnable {
     private final FlowControlExecutor<V> executorWithFlowControl;
-    private final Callable callable;
-    public Runnable(FlowControlExecutor<V> executorWithFlowControl, Callable callable){
+    private final Runnable runnable;
+    public Worker(FlowControlExecutor<V> executorWithFlowControl, Runnable runnable){
         this.executorWithFlowControl = executorWithFlowControl;
-        this.callable = callable;
+        this.runnable = runnable;
     }
 
     @Override
     public void run() {
         try {
-            callable.call();
+            runnable.run();
         } catch (Exception e) {
             executorWithFlowControl.pushException(e);
         } finally {

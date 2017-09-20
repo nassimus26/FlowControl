@@ -33,7 +33,7 @@ public class BufferedBatchFlowControlExecutorTest {
                 new BufferedBatchFlowControlExecutor<String>(
                         new BufferedBatchCallable<String>() {
                             @Override
-                            public void call(List<String> batchValues) throws Exception {
+                            public void call(List<String> batchValues) {
                                 ArrayList<String> tmp = new ArrayList<>();
                                 for ( int i=0; i<batchValues.size(); i++ )
                                     tmp.add(transformRow(batchValues.get(i)));

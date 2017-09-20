@@ -32,6 +32,7 @@ public abstract class FlowControlExecutor<V> {
     private Timer timer = null;
     private int releaseSize;
     protected Object emptyQueueLock = new Object();
+    protected Object fullQueueLock = new Object();
 
     public FlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this(nbThreads, maxQueueSize, new ThreadFactory() {
@@ -48,7 +49,7 @@ public abstract class FlowControlExecutor<V> {
         this.semaphore = new Semaphore(nbTotalTasks);
         this.name = name;
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nbThreads);
-        executor.setThreadFactory(threadFactory);
+        this.executor.setThreadFactory(threadFactory);
     }
     public abstract void handleException(Exception e);
 
@@ -59,6 +60,10 @@ public abstract class FlowControlExecutor<V> {
 
     void releaseSemaphore() {
         semaphore.release();
+        synchronized (fullQueueLock){
+                fullQueueLock.notify();
+
+        }
         if (isQueueEmpty()) {
             synchronized (emptyQueueLock){
                 emptyQueueLock.notifyAll();
@@ -69,18 +74,18 @@ public abstract class FlowControlExecutor<V> {
         return semaphore.availablePermits() == nbTotalTasks;
     }
 
-    public void submitWithException(Callable callable) throws Throwable {
-        submit(callable);
+    public void submitWithException(Runnable runnable) throws Throwable {
+        submit(runnable);
         if (executionExceptions.size() > 0) {
             throw executionExceptions.poll();
         }
     }
 
 
-    public void submit(Callable callable) throws InterruptedException {
-        Runnable<V> runnable = new Runnable<V>(this, callable);
+    public void submit(Runnable runnable) throws InterruptedException {
+        Worker<V> worker = new Worker<V>(this, runnable);
         semaphore.acquire();
-        executor.execute(runnable);
+        executor.execute(worker);
     }
     public abstract boolean isSubmitsEnds();
     protected void wait(boolean throwException, boolean shutdown) throws Exception {

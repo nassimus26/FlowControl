@@ -72,6 +72,7 @@ public class BufferedBatchFlowControlExecutorTest {
         Collections.sort(result);
         Assert.assertArrayEquals( expectedValues.toArray(), result.toArray() );
     }
+
     private String generateRow(int i){
         return "row_"+i;
     }

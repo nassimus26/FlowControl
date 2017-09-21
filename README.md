@@ -88,6 +88,10 @@ public void testFlowControl() throws Throwable {
     Assert.assertArrayEquals( expectedValues.toArray(), result.toArray() );
 }
 
+private String generateRow(int i){
+    return "row_"+i;
+}
+
 private String transformRow(String row){// some CPU operations
     return row.replaceAll("row", "replaceMe").replaceAll("_", "!")
             .replaceAll("replaceMe", "ligne").replaceAll("!", "_");

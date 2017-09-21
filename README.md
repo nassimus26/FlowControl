@@ -6,7 +6,7 @@ Powerful Thread Pool Executor with Flow Control and BatchBuffer execution
 
 - Threads Exceptions handling
 
-- Fixed Blocking Queue for BackPresure control
+- Fixed Queue Size for BackPresure control
 
 - Fixed BufferedBatch processing :
         
@@ -43,14 +43,17 @@ public void testFlowControl() throws Exception {
     double processDurationWithOneThread = ((System.currentTimeMillis()-now)/1000.0);
     System.out.println("1 Thread processing takes "+ processDurationWithOneThread +" seconds");
     final List<String> result = new Vector<>();
-    AtomicBoolean isProcessingEnds = new AtomicBoolean();
-    BufferedBatchFlowControlExecutor<String, String[]> processRows =
-            new BufferedBatchFlowControlExecutor<>(
-                    values -> {
-                        ArrayList<String> tmp = new ArrayList<>();
-                        for ( int i=0; i<values.length; i++ )
-                            tmp.add(transformRow(values[i]));
-                        result.addAll(tmp);
+    final AtomicBoolean isProcessingEnds = new AtomicBoolean();
+    BufferedBatchFlowControlExecutor<String> processRows =
+            new BufferedBatchFlowControlExecutor<String>(
+                    new BufferedBatchCallable<String>() {
+                        @Override
+                        public void call(List<String> batchValues) {
+                            ArrayList<String> tmp = new ArrayList<>();
+                            for ( int i=0; i<batchValues.size(); i++ )
+                                tmp.add(transformRow(batchValues.get(i)));
+                            result.addAll(tmp);
+                        }
                     }, 1000, BufferedBatchFlowControlExecutor.getNbCores(), 500, "processRows") {
 
                 @Override
@@ -76,7 +79,7 @@ public void testFlowControl() throws Exception {
         }
     }
     isProcessingEnds.set(true);
-    processRows.waitAndFlushAndShutDown();
+    processRows.waitAndFlush(true);
     double parallelDuration = ((System.currentTimeMillis()-now)/1000.0);
     System.out.println("Parallel processing takes "+ parallelDuration +
             " seconds ("+ (int)(processDurationWithOneThread*100/parallelDuration)+"% faster)");

@@ -30,7 +30,7 @@ Main classes :
 Example :
 ```java
 @Test
-public void testFlowControl() throws Exception {
+public void testFlowControl() throws Throwable {
     int nbrRows = 2_000_000;
     final List<String> rows = new ArrayList<>();
     for (int i=0;i<nbrRows;i++)
@@ -79,16 +79,13 @@ public void testFlowControl() throws Exception {
         }
     }
     isProcessingEnds.set(true);
-    processRows.waitAndFlush(true);
+    processRows.waitAndFlushWithException(true);
     double parallelDuration = ((System.currentTimeMillis()-now)/1000.0);
     System.out.println("Parallel processing takes "+ parallelDuration +
             " seconds ("+ (int)(processDurationWithOneThread*100/parallelDuration)+"% faster)");
     Collections.sort(expectedValues);
     Collections.sort(result);
     Assert.assertArrayEquals( expectedValues.toArray(), result.toArray() );
-}
-private String generateRow(int i){
-    return "row_"+i;
 }
 
 private String transformRow(String row){// some CPU operations

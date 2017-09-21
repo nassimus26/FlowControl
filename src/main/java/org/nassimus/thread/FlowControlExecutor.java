@@ -69,15 +69,7 @@ public abstract class FlowControlExecutor<V> {
         return semaphore.availablePermits() == nbTotalTasks;
     }
 
-    public void submitWithException(Runnable runnable) throws Throwable {
-        submit(runnable);
-        if (executionExceptions.size() > 0) {
-            throw executionExceptions.poll();
-        }
-    }
-
-
-    public void submit(Runnable runnable) throws InterruptedException {
+    public void submit(Callable runnable) throws InterruptedException {
         Worker<V> worker = new Worker<V>(this, runnable);
         semaphore.acquire();
         executor.execute(worker);

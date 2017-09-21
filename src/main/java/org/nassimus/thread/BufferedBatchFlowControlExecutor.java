@@ -69,7 +69,7 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
             newBuffer.clear();
             newBuffer.addAll(buffer);
             buffer.clear();
-            submit(new Runnable() {
+            submit(new Callable() {
                 @Override
                 public void run() {
                     callable.call(newBuffer);

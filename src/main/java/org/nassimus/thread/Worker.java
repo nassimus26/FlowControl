@@ -5,16 +5,16 @@ package org.nassimus.thread;
 * */
 class Worker<V> implements java.lang.Runnable {
     private final FlowControlExecutor<V> executorWithFlowControl;
-    private final Runnable runnable;
-    public Worker(FlowControlExecutor<V> executorWithFlowControl, Runnable runnable){
+    private final Callable callable;
+    public Worker(FlowControlExecutor<V> executorWithFlowControl, Callable callable){
         this.executorWithFlowControl = executorWithFlowControl;
-        this.runnable = runnable;
+        this.callable = callable;
     }
 
     @Override
     public void run() {
         try {
-            runnable.run();
+            callable.run();
         } catch (Exception e) {
             executorWithFlowControl.pushException(e);
         } finally {

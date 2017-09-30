@@ -40,13 +40,13 @@ public abstract class FlowControlExecutor<V> {
                 return new Thread(r, name + "_" + new AtomicInteger().incrementAndGet());
             }
         });
+        this.name = name;
     }
     public FlowControlExecutor(int nbThreads, int maxQueueSize, final ThreadFactory threadFactory) {
         this.timeMilliStart = System.currentTimeMillis();
         this.releaseSize = maxQueueSize;
         this.nbTotalTasks = nbThreads + maxQueueSize;
         this.semaphore = new Semaphore(nbTotalTasks);
-        this.name = name;
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nbThreads);
         this.executor.setThreadFactory(threadFactory);
     }

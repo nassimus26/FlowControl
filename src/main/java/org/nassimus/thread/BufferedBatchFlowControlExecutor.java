@@ -48,11 +48,11 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
             throw executionExceptions.poll();
         }
     }
-    public void submit(T params) throws InterruptedException {
+    public void submit(T task) throws InterruptedException {
         if (isSubmitsEnds())
             throw new RuntimeException("No more task accepted");
-        synchronized (buffer){
-            buffer.add(params);
+        synchronized (buffer) {
+            buffer.add(task);
             if (buffer.size()==bufferSize){
                 process();
             }
@@ -60,11 +60,8 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
     }
     public abstract boolean isSubmitsEnds();
 
-    private void process() throws InterruptedException{
-        if (!buffer.isEmpty())
-        synchronized (this){
-            if (buffer.isEmpty())
-                return;
+    private void process() throws InterruptedException {
+        synchronized (buffer) {
             final List<T> newBuffer = buffersPool.checkOut();
             newBuffer.clear();
             newBuffer.addAll(buffer);

@@ -17,14 +17,17 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
     private List<T> buffer;
     private SimpleObjectPool<List<T>> buffersPool;
     private int bufferSize;
+
     public BufferedBatchFlowControlExecutor(BufferedBatchCallable<T> callable, final int bufferSize, int nbThreads, int maxQueueSize, final ThreadFactory threadFactory) {
         super(nbThreads, maxQueueSize, threadFactory);
         init(callable, bufferSize, nbThreads, maxQueueSize);
     }
+
     public BufferedBatchFlowControlExecutor(BufferedBatchCallable<T> callable, final int bufferSize, int nbThreads, int maxQueueSize, final String name) {
         super(nbThreads, maxQueueSize, name);
         init(callable, bufferSize, nbThreads, maxQueueSize);
     }
+
     private void init(BufferedBatchCallable<T> callable, final int bufferSize, int nbThreads, int maxQueueSize){
         this.bufferSize = bufferSize;
         this.callable = callable;
@@ -35,19 +38,19 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
                 return new ArrayList<T>(bufferSize);
             }
         };
-
     }
-
 
     public BufferedBatchFlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
         this(null,0, nbThreads, maxQueueSize, name );
     }
+
     public void submitWithException(T params) throws Throwable {
         submit(params);
         if (executionExceptions.size() > 0) {
             throw executionExceptions.poll();
         }
     }
+
     public void submit(T task) throws InterruptedException {
         if (isSubmitsEnds())
             throw new RuntimeException("No more task accepted");
@@ -58,6 +61,7 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
             }
         }
     }
+
     public abstract boolean isSubmitsEnds();
 
     private void process() throws InterruptedException {
@@ -76,9 +80,6 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
         }
     }
 
-
-
-
     private boolean shouldFlush(){
         return isSubmitsEnds() && !buffer.isEmpty();
     }
@@ -91,6 +92,7 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
                 throw (InterruptedException)e;
         }
     }
+
     public void waitAndFlushWithException(boolean shutdown) throws Throwable {
         waitAndFlush(true, shutdown);
     }
@@ -99,6 +101,7 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
     protected void wait(boolean throwException, boolean shutdown) throws Exception {
         waitAndFlush(throwException, shutdown);
     }
+
     protected void waitAndFlush(boolean throwException, boolean shutdown) throws Exception {
         while(true){
             synchronized (emptyQueueLock) {
@@ -129,4 +132,5 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
     public String toString(long chunkSize) {
         return super.toString(chunkSize*bufferSize);
     }
+
 }

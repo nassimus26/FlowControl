@@ -81,4 +81,5 @@ public class BufferedBatchFlowControlExecutorTest {
         return row.replaceAll("row", "replaceMe").replaceAll("_", "!")
                 .replaceAll("replaceMe", "ligne").replaceAll("!", "_");
     }
+
 }

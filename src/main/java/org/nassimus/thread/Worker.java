@@ -4,8 +4,10 @@ package org.nassimus.thread;
 * cd_boite@yahoo.fr
 * */
 class Worker<V> implements java.lang.Runnable {
+
     private final FlowControlExecutor<V> executorWithFlowControl;
     private final Callable callable;
+
     public Worker(FlowControlExecutor<V> executorWithFlowControl, Callable callable){
         this.executorWithFlowControl = executorWithFlowControl;
         this.callable = callable;
@@ -21,4 +23,5 @@ class Worker<V> implements java.lang.Runnable {
             executorWithFlowControl.releaseSemaphore();
         }
     }
+
 }

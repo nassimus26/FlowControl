@@ -9,5 +9,5 @@ import java.util.List;
 * cd_boite@yahoo.fr
 * */
 public interface BufferedBatchCallable<V>  {
-    public abstract void call(List<V> batchValues);
+    void call(List<V> batchValues);
 }

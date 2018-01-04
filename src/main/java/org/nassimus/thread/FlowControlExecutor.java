@@ -30,7 +30,6 @@ public abstract class FlowControlExecutor<V> {
     private long nbTaskExecutedLast;
 
     private Timer timer = null;
-    private int releaseSize;
     protected Object emptyQueueLock = new Object();
 
     public FlowControlExecutor(int nbThreads, int maxQueueSize, final String name) {
@@ -42,14 +41,15 @@ public abstract class FlowControlExecutor<V> {
         });
         this.name = name;
     }
+
     public FlowControlExecutor(int nbThreads, int maxQueueSize, final ThreadFactory threadFactory) {
         this.timeMilliStart = System.currentTimeMillis();
-        this.releaseSize = maxQueueSize;
         this.nbTotalTasks = nbThreads + maxQueueSize;
         this.semaphore = new Semaphore(nbTotalTasks);
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(nbThreads);
         this.executor.setThreadFactory(threadFactory);
     }
+
     public abstract void handleException(Exception e);
 
     void pushException(Exception e) {
@@ -65,6 +65,7 @@ public abstract class FlowControlExecutor<V> {
             }
         }
     }
+
     public boolean isQueueEmpty(){
         return semaphore.availablePermits() == nbTotalTasks;
     }
@@ -74,7 +75,9 @@ public abstract class FlowControlExecutor<V> {
         semaphore.acquire();
         executor.execute(worker);
     }
+
     public abstract boolean isSubmitsEnds();
+
     protected void wait(boolean throwException, boolean shutdown) throws Exception {
         synchronized (emptyQueueLock) {
             if (!isQueueEmpty()){
@@ -91,6 +94,7 @@ public abstract class FlowControlExecutor<V> {
             }
         }
     }
+
     public void waitWithException(boolean shutdown) throws Exception {
         wait(true, shutdown);
     }

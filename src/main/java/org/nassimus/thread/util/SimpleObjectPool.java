@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class SimpleObjectPool<T> {
-    private final int maxNbObjects;
+
     private final Map<T, Boolean> objects;
     private T[] objectsArray;
+
     public SimpleObjectPool(int maxNbObjects){
-        this.maxNbObjects = maxNbObjects;
         objects = new HashMap<>(maxNbObjects);
     }
 
@@ -30,9 +30,11 @@ public abstract class SimpleObjectPool<T> {
         }
         return object;
     }
+
     public void release(T object) {
         synchronized (this){
             objects.put(object, false);
         };
     }
+
 }

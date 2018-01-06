@@ -2,8 +2,6 @@ package org.nassimus.thread;
 
 import org.nassimus.thread.util.SimpleObjectPool;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ThreadFactory;
 

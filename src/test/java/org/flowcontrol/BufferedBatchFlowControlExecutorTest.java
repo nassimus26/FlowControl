@@ -39,7 +39,7 @@ public class BufferedBatchFlowControlExecutorTest {
                                     tmp.add(transformRow(batchValues.get(i)));
                                 result.addAll(tmp);
                             }
-                        }, 1000, BufferedBatchFlowControlExecutor.getNbCores(), 500, "processRows") {
+                        }, 1000, BufferedBatchFlowControlExecutor.getNbCores(), 50, "processRows") {
 
                     @Override
                     public void handleException(Exception e) {

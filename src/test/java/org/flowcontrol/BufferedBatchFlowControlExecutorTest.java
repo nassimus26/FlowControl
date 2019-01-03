@@ -28,7 +28,6 @@ public class BufferedBatchFlowControlExecutorTest {
         double processDurationWithOneThread = ((System.currentTimeMillis()-now)/1000.0);
         System.out.println("1 Thread processing takes "+ processDurationWithOneThread +" seconds");
         final List<String> result = new Vector<>();
-        final AtomicBoolean isProcessingEnds = new AtomicBoolean();
         BufferedBatchFlowControlExecutor<String> processRows =
                 new BufferedBatchFlowControlExecutor<String>(
                         new BufferedBatchCallable<String>() {
@@ -46,11 +45,6 @@ public class BufferedBatchFlowControlExecutorTest {
                         /* The executor will throw the exception at the end if any exception */
                     }
 
-                    @Override
-                    public boolean isSubmitsEnds() {
-                        return isProcessingEnds.get();
-                    }
-
                 };
 
         System.out.println("Starting Parallel processing...");
@@ -63,7 +57,7 @@ public class BufferedBatchFlowControlExecutorTest {
                 e.printStackTrace();
             }
         }
-        isProcessingEnds.set(true);
+        processRows.terminateWorks();
         processRows.waitAndFlushWithException(true);
         double parallelDuration = ((System.currentTimeMillis()-now)/1000.0);
         System.out.println("Parallel processing takes "+ parallelDuration +

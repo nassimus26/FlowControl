@@ -4,17 +4,19 @@ import org.nassimus.thread.util.SimpleObjectPool;
 
 import java.util.*;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /*
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
 * */
-public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExecutor<List<T>> {
+public class BufferedBatchFlowControlExecutor<T> extends FlowControlExecutor<List<T>> {
 
     private BufferedBatchCallable<T> callable;
     private List<T> buffer;
     private SimpleObjectPool<List<T>> buffersPool;
     private int bufferSize;
+    private AtomicBoolean isSubmitEnds = new AtomicBoolean();
 
     public BufferedBatchFlowControlExecutor(BufferedBatchCallable<T> callable, final int bufferSize, int nbThreads, int maxQueueSize, final ThreadFactory threadFactory) {
         super(nbThreads, maxQueueSize, threadFactory);
@@ -50,7 +52,7 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
     }
 
     public void submit(T task) throws InterruptedException {
-        if (isSubmitsEnds())
+        if (isSubmitEnds.get())
             throw new RuntimeException("No more task accepted");
         synchronized (buffer) {
             buffer.add(task);
@@ -60,7 +62,9 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
         }
     }
 
-    public abstract boolean isSubmitsEnds();
+    public void terminateWorks() {
+        isSubmitEnds.set(true);
+    }
 
     private void process() throws InterruptedException {
         synchronized (buffer) {
@@ -79,7 +83,7 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
     }
 
     private boolean shouldFlush(){
-        return isSubmitsEnds() && !buffer.isEmpty();
+        return isSubmitEnds.get() && !buffer.isEmpty();
     }
 
     public void waitAndFlush(boolean shutdown) throws InterruptedException {
@@ -114,7 +118,7 @@ public abstract class BufferedBatchFlowControlExecutor<T> extends FlowControlExe
                 } finally {
                     if (shouldFlush()) {
                         process();
-                    } else if ( isSubmitsEnds() && isQueueEmpty() ) {
+                    } else if ( isSubmitEnds.get() && isQueueEmpty() ) {
                         break;
                     }
                 }

@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 * @author : Nassim MOUALEK
 * cd_boite@yahoo.fr
 * */
-public abstract class FlowControlExecutor<V> {
+public class FlowControlExecutor<V> {
 
     private static Runtime runtime = Runtime.getRuntime();
     private static int mb = 1024 * 1024;
@@ -50,7 +50,9 @@ public abstract class FlowControlExecutor<V> {
         this.executor.setThreadFactory(threadFactory);
     }
 
-    public abstract void handleException(Exception e);
+    public void handleException(Exception e) {
+        e.printStackTrace();
+    }
 
     void pushException(Exception e) {
         executionExceptions.add(e);
@@ -76,7 +78,7 @@ public abstract class FlowControlExecutor<V> {
         executor.execute(worker);
     }
 
-    public abstract boolean isSubmitsEnds();
+
 
     protected void wait(boolean throwException, boolean shutdown) throws Exception {
         synchronized (emptyQueueLock) {
